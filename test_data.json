@@ -1,0 +1,82 @@
+[
+  {
+      "sentence": "The dog chased the cat, but it was a false alarm.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", ".", "CONJ", "PRON", "VERB", "DET", "NOUN", "."]
+  },
+  {
+      "sentence": "The teacher gave the student a book, which was very old.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "DET", "NOUN", ".", "PRON", "VERB", "ADV", "ADJ", "."]
+  },
+  {
+      "sentence": "The company will hire a new CEO, who has a lot of experience.",
+      "tags": ["DET", "NOUN", "AUX", "VERB", "DET", "ADJ", "NOUN", ".", "PRON", "VERB", "DET", "NOUN", "."]
+  },
+  {
+      "sentence": "The food was delicious, but the service was terrible.",
+      "tags": ["DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "DET", "NOUN", "VERB", "ADJ", "."]
+  },
+  {
+      "sentence": "The new policy will affect all employees, except for John.",
+      "tags": ["DET", "ADJ", "NOUN", "AUX", "VERB", "DET", "NOUN", ".", "ADP", "DET", "NOUN", "."]
+  },
+  {
+      "sentence": "The book, which was written by my favorite author, is on the bestseller list.",
+      "tags": ["DET", "NOUN", ".", "PRON", "VERB", "VERB", "ADP", "DET", "ADJ", "NOUN", ".", "VERB", "DET", "NOUN", "NOUN", "."]
+  },
+  {
+      "sentence": "The teacher asked the student to write an essay, but he forgot.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "PRT", "VERB", "DET", "NOUN", ".", "PRON", "VERB", "."]
+  },
+  {
+      "sentence": "The company's stock prices have been fluctuating wildly.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "AUX", "VERB", "ADV", "."]
+  },
+  {
+      "sentence": "The new employee is very nervous, because it's his first day.",
+      "tags": ["DET", "ADJ", "NOUN", "VERB", "ADV", "ADJ", ".", "CONJ", "PRON", "VERB", "DET", "ADJ", "NOUN", "."]
+  },
+  {
+      "sentence": "The hotel room was nice, except for the noisy air conditioner.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "ADJ", ".", "ADP", "DET", "ADJ", "NOUN", "NOUN", "."]
+  },
+  {
+      "sentence": "The student's grades have been improving steadily.",
+      "tags": ["DET", "NOUN", "NOUN", "AUX", "VERB", "ADV", "."]
+  },
+  {
+      "sentence": "The teacher gave the student a book, that was very old.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "DET", "VERB", "ADJ", "."]
+  },
+  {
+      "sentence": "The company will hire a new CEO, that has a lot of experience.",
+      "tags": ["DET", "NOUN", "AUX", "VERB", "DET", "ADJ", "NOUN", ".", "PRON", "VERB", "DET", "NOUN", "."]
+  },
+  {
+      "sentence": "The food was delicious, but the service was terrible, and the ambiance was nice.",
+      "tags": ["DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "DET", "NOUN", "VERB", "ADJ", "."]
+  },
+  {
+      "sentence": "The new policy will affect all employees, including John.",
+      "tags": ["DET", "ADJ", "NOUN", "AUX", "VERB", "DET", "NOUN", ".", "VERB", "NOUN", "."]
+  },
+  {
+      "sentence": "The book, that was written by my favorite author, is on the bestseller list.",
+      "tags": ["DET", "NOUN", ".", "PRON", "VERB", "VERB", "ADP", "DET", "ADJ", "NOUN", ".", "VERB", "DET", "NOUN", "NOUN", "."]
+  },
+  {
+      "sentence": "The teacher asked the student to write an essay, but he refused.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "PRT", "VERB", "DET", "NOUN", ".", "PRON", "VERB", "."]
+  },
+  {
+      "sentence": "The company's stock prices have been fluctuating wildly, due to the economic crisis.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "AUX", "VERB", "ADV", ".", "ADP", "DET", "ADJ", "NOUN", "."]
+  },
+  {
+      "sentence": "The new employee is very nervous, because it's his first day, and he's not sure what to expect.",
+      "tags": ["DET", "ADJ", "NOUN", "VERB", "ADV", "ADJ", ".", "CONJ", "PRON", "VERB", "DET", "ADJ", "NOUN", "CONJ", "PRON", "VERB", "."]
+  },
+  {
+      "sentence": "The hotel room was nice, except for the noisy air conditioner, and the uncomfortable bed.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "ADJ", ".", "ADP", "DET", "ADJ", "NOUN", "NOUN", ".", "CONJ", "DET", "ADJ", "NOUN", "."]
+  }
+]
