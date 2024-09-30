@@ -22,8 +22,8 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 # Download NLTK Brown dataset if not already downloaded
-nltk.download('brown', quiet=True)
-nltk.download('universal_tagset', quiet=True)
+nltk.download('brown')
+nltk.download('universal_tagset')
 
 # Check for GPU availability
 use_cuda = torch.cuda.is_available()
