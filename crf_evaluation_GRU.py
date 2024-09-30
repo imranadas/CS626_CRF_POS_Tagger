@@ -1,16 +1,14 @@
-import logging
-import torch
-import numpy as np
+import nltk
 import json
+import torch
+import logging
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import nltk
-from nltk.corpus import brown
 from collections import defaultdict
-from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 from torch.nn.utils.rnn import pad_sequence
-from nltk.stem import PorterStemmer
-from crf_training_GRU import CRFModel, Config
+from crf_training_GRU import CRFModel, Config, prepare_data
+from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 
 # Set up logging
 logger = logging.getLogger()
@@ -27,9 +25,6 @@ logger.addHandler(console_handler)
 nltk.download('brown', quiet=True)
 nltk.download('universal_tagset', quiet=True)
 
-# Initialize stemmer
-stemmer = PorterStemmer()
-
 # Check for GPU availability
 use_cuda = torch.cuda.is_available()
 logger.info(f"Using CUDA: {use_cuda}")
@@ -38,41 +33,6 @@ config = Config()
 
 # Load the trained model
 model_path = 'Models/best_crf_pos_GRU.pth'
-
-# Data preparation function
-def extract_features(sentence, tags):
-    """Extracts features from the input sentence and its corresponding tags."""
-    features = []
-    for word, tag in zip(sentence, tags):
-        stem = stemmer.stem(word.lower())
-        suffix = word[-2:] if len(word) > 2 else word
-        features.append((word.lower(), stem, suffix, tag))
-    return features
-
-def prepare_data():
-    """Prepares training data from the Brown corpus."""
-    tagged_sentences = brown.tagged_sents(tagset='universal')
-
-    word_to_ix = defaultdict(lambda: len(word_to_ix))
-    tag_to_ix = defaultdict(lambda: len(tag_to_ix))
-
-    training_data = []
-    logger.info(f'Total tagged sentences in Brown corpus: {len(tagged_sentences)}')
-
-    for idx, tagged_sentence in enumerate(tagged_sentences):
-        words = [word for word, tag in tagged_sentence]
-        tags = [tag for word, tag in tagged_sentence]
-        features = extract_features(words, tags)
-
-        sentence_indices = [word_to_ix[word.lower()] for word, stem, suffix, tag in features]
-        tag_indices = [tag_to_ix[tag] for word, stem, suffix, tag in features]
-        training_data.append((sentence_indices, tag_indices))
-
-        if idx % 1000 == 0:
-            logger.info(f'Processed {idx}/{len(tagged_sentences)} sentences.')
-
-    logger.info(f'Completed data preparation. Total training samples: {len(training_data)}')
-    return training_data, word_to_ix, tag_to_ix
 
 # Evaluate the model
 def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
@@ -114,7 +74,7 @@ def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
         true_tags = [ix_to_tag[idx] for idx in true_tag_indices]
         predicted_tags = [ix_to_tag[idx] for idx in predicted_tags]
 
-        y_true.extend(true_tags)  # Convert numerical true tags to tag names
+        y_true.extend(true_tags)
         y_pred.extend(predicted_tags)
 
         logger.debug("Processed sentence %d/%d | True tags: %s | Predicted tags: %s",
@@ -125,8 +85,7 @@ def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
             logger.info("Progress: %.2f%% (%d out of %d sentences processed)",
                         progress_percentage, idx + 1, total_sentences)
 
-    # Now both y_true and y_pred are in string format (tag names)
-    # Calculate overall metrics (unchanged)
+    # Calculate overall metrics
     precision, recall, f1, _ = precision_recall_fscore_support(y_true, y_pred, average='micro', zero_division=0)
     f05 = 1.25 * precision * recall / (0.25 * precision + recall) if (0.25 * precision + recall) > 0 else 0
     f2 = 5 * precision * recall / (4 * precision + recall) if (4 * precision + recall) > 0 else 0

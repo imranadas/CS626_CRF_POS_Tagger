@@ -1,15 +1,15 @@
+import nltk
 import torch
+import random
+import logging
 import torch.nn as nn
-import torch.optim as optim
 from TorchCRF import CRF
+import torch.optim as optim
 from nltk.corpus import brown
 from nltk.stem import PorterStemmer
 from collections import defaultdict
-from sklearn.model_selection import train_test_split
-import logging
-import nltk
-import random
 from torch.nn.utils.rnn import pad_sequence
+from sklearn.model_selection import train_test_split
 
 # Download NLTK datasets if not already downloaded
 nltk.download('brown')
@@ -46,14 +46,14 @@ def extract_features(sentence, tags):
     features = []
     for word, tag in zip(sentence, tags):
         stem = stemmer.stem(word.lower())
-        suffix = word[-2:] if len(word) > 2 else word  # Get last 2 characters as suffix
+        suffix = word[-2:] if len(word) > 2 else word
         features.append((word.lower(), stem, suffix, tag))
     logger.debug(f'Extracted features: {features}')
     return features
 
 # Data preparation
 def prepare_data():
-    tagged_sentences = brown.tagged_sents(tagset='universal')  # Use universal tagset
+    tagged_sentences = brown.tagged_sents(tagset='universal')
 
     word_to_ix = defaultdict(lambda: len(word_to_ix))
     tag_to_ix = defaultdict(lambda: len(tag_to_ix))
@@ -93,7 +93,7 @@ class CRFModel(nn.Module):
         embeds = self.embedding(x)
         lstm_out, _ = self.lstm(embeds)
         lstm_out = self.layer_norm(lstm_out)
-        lstm_out = self.dropout(lstm_out)  # Apply dropout
+        lstm_out = self.dropout(lstm_out)
         emissions = self.linear1(lstm_out)
         emissions = torch.relu(emissions)
         emissions = self.linear2(emissions)
@@ -110,10 +110,7 @@ def prepare_batch(batch_data):
     sentences_tensor = pad_sequence([torch.tensor(sentence) for sentence in sentences], batch_first=True)
     tags_tensor = pad_sequence([torch.tensor(tag) for tag in tags], batch_first=True)
 
-    # Create mask: 1 for valid tokens, 0 for padding tokens
     mask = (sentences_tensor != 0).type(torch.uint8)
-    
-    # Ensure mask for the first timestep is all on
     mask[:, 0] = 1
     
     return sentences_tensor, tags_tensor, mask
@@ -128,10 +125,10 @@ def train_model(model, train_data, val_data, config):
     patience_counter = 0
 
     for epoch in range(config.epochs):
-        model.train()  # Ensure model is in training mode at the start of each epoch
+        model.train()
         logger.info(f'Starting epoch {epoch + 1}/{config.epochs}')
         
-        epoch_loss = 0  # Track loss for the epoch
+        epoch_loss = 0
         
         # Process data in batches
         for batch_idx in range(0, len(train_data), config.batch_size):
@@ -145,7 +142,7 @@ def train_model(model, train_data, val_data, config):
 
             model.zero_grad()
             loss = model(sentences_tensor, tags_tensor, mask)
-            loss.backward()  # Ensure this is called when model is in training mode
+            loss.backward()
             optimizer.step()
 
             epoch_loss += loss.item()
@@ -162,8 +159,8 @@ def train_model(model, train_data, val_data, config):
         # Check for improvement
         if val_accuracy > best_accuracy:
             best_accuracy = val_accuracy
-            patience_counter = 0  # Reset patience counter
-            torch.save(model.state_dict(), 'best_' + config.model_save_path)  # Save the best model
+            patience_counter = 0
+            torch.save(model.state_dict(), 'best_' + config.model_save_path)
             logger.info(f'New best model saved with accuracy: {best_accuracy * 100:.2f}%')
         else:
             patience_counter += 1
@@ -171,14 +168,13 @@ def train_model(model, train_data, val_data, config):
 
         if patience_counter >= config.patience:
             logger.info('Early stopping triggered.')
-            break  # Stop training
+            break
 
     # Always save the final model after training
-    torch.save(model.state_dict(), 'final_' + config.model_save_path)  # Save the final model
+    torch.save(model.state_dict(), 'final_' + config.model_save_path)
     logger.info(f'Final model saved at {config.model_save_path}')
 
     logger.info(f'Training completed. Best Validation Accuracy: {best_accuracy * 100:.2f}%')
-
 
 # Validate the model
 def validate_model(model, val_data, config):
@@ -205,9 +201,9 @@ def validate_model(model, val_data, config):
                 predicted_tags = torch.tensor(predicted_tags[0]).cuda() if config.cuda else torch.tensor(predicted_tags[0])
 
             # Remove padding from both predicted_tags and tags_tensor
-            valid_length = mask.sum().item()  # Count the number of valid tokens
-            predicted_tags = predicted_tags[:valid_length]  # Truncate to valid length
-            actual_tags = tags_tensor[0][:valid_length]  # Truncate to valid length
+            valid_length = mask.sum().item()
+            predicted_tags = predicted_tags[:valid_length]
+            actual_tags = tags_tensor[0][:valid_length]
 
             # Ensure both predicted_tags and actual_tags have compatible shapes
             total_correct += (predicted_tags == actual_tags).sum().item()
@@ -216,7 +212,6 @@ def validate_model(model, val_data, config):
     accuracy = total_correct / total_tags if total_tags > 0 else 0
     logger.info(f'Validation completed. Total Correct: {total_correct}, Total Tags: {total_tags}, Validation Accuracy: {accuracy * 100:.2f}%')
     return accuracy
-
 
 # Main function
 if __name__ == "__main__":
