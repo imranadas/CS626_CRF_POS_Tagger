@@ -75,9 +75,12 @@ def prepare_data():
     return training_data, word_to_ix, tag_to_ix
 
 # Evaluate the model
-def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
+def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
+    # Create reverse mapping for tag indices to tag names
+    ix_to_tag = {v: k for k, v in tag_to_ix.items()}
+    
     # Create a list of unique tags from the true tags
-    all_tags = list(set(tag for sentence in tagged_sentences for tag in sentence[1]))
+    all_tags = [ix_to_tag[i] for i in range(len(tag_to_ix))]
     logger.info("Evaluating model with tags: %s", all_tags)
 
     # Initialize lists for overall metrics
@@ -94,25 +97,37 @@ def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
     y_true = []
     y_pred = []
 
+    total_sentences = len(tagged_sentences)
+
     # Evaluate on the tagged sentences
-    for sent in tagged_sentences:
-        sentence_indices, true_tag_indices = sent  # Unpack the word and tag indices
+    for idx, sent in enumerate(tagged_sentences):
+        sentence_indices, true_tag_indices = sent
         sentence_tensor = pad_sequence([torch.tensor(sentence_indices)], batch_first=True)
 
         with torch.no_grad():
             if use_cuda:
                 sentence_tensor = sentence_tensor.cuda()
-            predicted_tags = model(sentence_tensor)  # Get model predictions
-            predicted_tags = predicted_tags.argmax(dim=1).cpu().numpy()
+            predicted_tags = model(sentence_tensor)
+            predicted_tags = predicted_tags[0]
 
-        y_true.extend(true_tag_indices)
+        # Convert true and predicted indices to tag names
+        true_tags = [ix_to_tag[idx] for idx in true_tag_indices]
+        predicted_tags = [ix_to_tag[idx] for idx in predicted_tags]
+
+        y_true.extend(true_tags)  # Convert numerical true tags to tag names
         y_pred.extend(predicted_tags)
 
-        logger.info("Processed sentence indices: %s | True tags: %s | Predicted tags: %s", 
-                    sentence_indices, true_tag_indices, predicted_tags)
+        logger.debug("Processed sentence %d/%d | True tags: %s | Predicted tags: %s",
+                    idx + 1, total_sentences, true_tags, predicted_tags)
 
-    # Calculate overall metrics
-    precision, recall, f1, _ = precision_recall_fscore_support(y_true, y_pred, average='macro', zero_division=0)
+        if (idx + 1) % 100 == 0 or (idx + 1) == total_sentences:
+            progress_percentage = (idx + 1) / total_sentences * 100
+            logger.info("Progress: %.2f%% (%d out of %d sentences processed)",
+                        progress_percentage, idx + 1, total_sentences)
+
+    # Now both y_true and y_pred are in string format (tag names)
+    # Calculate overall metrics (unchanged)
+    precision, recall, f1, _ = precision_recall_fscore_support(y_true, y_pred, average='micro', zero_division=0)
     f05 = 1.25 * precision * recall / (0.25 * precision + recall) if (0.25 * precision + recall) > 0 else 0
     f2 = 5 * precision * recall / (4 * precision + recall) if (4 * precision + recall) > 0 else 0
 
@@ -125,25 +140,26 @@ def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
     logger.info("Overall Precision: %.2f | Recall: %.2f | F1: %.2f | F0.5: %.2f | F2: %.2f", 
                 precision, recall, f1, f05, f2)
 
-    # Calculate per-tag metrics
-    for tag in all_tags:
-        true_tag_indices = [i for i, t in enumerate(y_true) if t == tag]
-        pred_tag_indices = [i for i, t in enumerate(y_pred) if t == tag]
+    # Update per-tag metrics calculation
+    for tag_idx in range(len(all_tags)):
+        tag_name = ix_to_tag[tag_idx]
+        true_tag_indices = [i for i, t in enumerate(y_true) if t == ix_to_tag[tag_idx]]
+        pred_tag_indices = [i for i, t in enumerate(y_pred) if t == ix_to_tag[tag_idx]]
 
         if true_tag_indices and pred_tag_indices:
             p, r, f, _ = precision_recall_fscore_support(
                 [y_true[i] for i in true_tag_indices],
                 [y_pred[i] for i in true_tag_indices],
-                average='binary',  # Change to 'binary' if evaluating one tag at a time
+                average='micro',
                 zero_division=0
             )
         else:
             p, r, f = 0, 0, 0
 
-        per_tag_results[tag]['precision'].append(p)
-        per_tag_results[tag]['recall'].append(r)
-        per_tag_results[tag]['f1'].append(f)
-        logger.info("Tag: %s | Precision: %.2f | Recall: %.2f | F1: %.2f", tag, p, r, f)
+        per_tag_results[tag_name]['precision'].append(p)
+        per_tag_results[tag_name]['recall'].append(r)
+        per_tag_results[tag_name]['f1'].append(f)
+        logger.info("Tag: %s | Precision: %.2f | Recall: %.2f | F1: %.2f", tag_name, p, r, f)
 
     # Create and save confusion matrix
     cm = confusion_matrix(y_true, y_pred, labels=all_tags)
@@ -159,10 +175,10 @@ def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
         'f2': np.mean(overall_f2)
     }
     
-    with open('GRU_overall_performance_metrics.json', 'w') as f:
+    with open('Model_Metrics/GRU_overall_performance_metrics.json', 'w') as f:
         json.dump(overall_metrics, f, indent=4)
-    logger.info("Overall performance metrics saved to 'GRU_overall_performance_metrics.json'.")
-
+    logger.info("Overall performance metrics saved to 'Model_Metrics/GRU_overall_performance_metrics.json'.")
+    
     # Save per-POS performance metrics
     per_tag_metrics = {
         tag: {
@@ -173,13 +189,13 @@ def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
         for tag, results in per_tag_results.items()
     }
     
-    with open('GRU_per_pos_performance_metrics.json', 'w') as f:
+    with open('Model_Metrics/GRU_per_pos_performance_metrics.json', 'w') as f:
         json.dump(per_tag_metrics, f, indent=4)
-    logger.info("Per-POS performance metrics saved to 'GRU_per_pos_performance_metrics.json'.")
+    logger.info("Per-POS performance metrics saved to 'Model_Metrics/GRU_per_pos_performance_metrics.json'.")
 
     # Save confusion matrix
-    np.save('GRU_confusion_matrix.npy', conf_matrix)
-    logger.info("Confusion matrix saved to 'GRU_confusion_matrix.npy'.")
+    np.save('Model_Metrics/GRU_confusion_matrix.npy', conf_matrix)
+    logger.info("Confusion matrix saved to 'Model_Metrics/GRU_confusion_matrix.npy'.")
 
     # Plot confusion matrix using Seaborn
     plt.figure(figsize=(10, 8))
@@ -189,9 +205,9 @@ def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
     plt.xlabel('Predicted label')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('GRU_confusion_matrix.png')  # Save plot to file
+    plt.savefig('Model_Metrics/GRU_confusion_matrix.png')
     plt.show()
-    logger.info("Confusion matrix plot saved as 'GRU_confusion_matrix.png'.")
+    logger.info("Confusion matrix plot saved as 'Model_Metrics/GRU_confusion_matrix.png'.")
 
     # Find most mismatched tags
     mismatches = []
@@ -201,13 +217,12 @@ def evaluate_model(tagged_sentences, model, word_to_ix, use_cuda):
                 mismatches.append((conf_matrix[i, j], tag1, tag2))
 
     mismatches.sort(reverse=True)
-    most_mismatched_tags = mismatches[:5]  # Top 5 mismatches
+    most_mismatched_tags = mismatches[:5]
 
     # Save most mismatched tags
-    with open('GRU_most_mismatched_tags.json', 'w') as f:
+    with open('Model_Metrics/GRU_most_mismatched_tags.json', 'w') as f:
         json.dump(most_mismatched_tags, f, indent=4)
-    logger.info("Most mismatched tags saved to 'GRU_most_mismatched_tags.json'.")
-
+    logger.info("Most mismatched tags saved to 'Model_Metrics/GRU_most_mismatched_tags.json'.")
 
 # Main execution
 if __name__ == '__main__':
@@ -216,4 +231,4 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load(model_path))
     if config.cuda:
         model = model.cuda()
-    evaluate_model(training_data, model, word_to_ix, use_cuda)
+    evaluate_model(training_data, model, word_to_ix, tag_to_ix, use_cuda)
