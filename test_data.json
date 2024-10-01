@@ -1,82 +1,199 @@
 [
-  {
-      "sentence": "The dog chased the cat, but it was a false alarm.",
-      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", ".", "CONJ", "PRON", "VERB", "DET", "NOUN", "."]
-  },
-  {
-      "sentence": "The teacher gave the student a book, which was very old.",
-      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "DET", "NOUN", ".", "PRON", "VERB", "ADV", "ADJ", "."]
-  },
-  {
-      "sentence": "The company will hire a new CEO, who has a lot of experience.",
-      "tags": ["DET", "NOUN", "AUX", "VERB", "DET", "ADJ", "NOUN", ".", "PRON", "VERB", "DET", "NOUN", "."]
-  },
-  {
-      "sentence": "The food was delicious, but the service was terrible.",
-      "tags": ["DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "DET", "NOUN", "VERB", "ADJ", "."]
-  },
-  {
-      "sentence": "The new policy will affect all employees, except for John.",
-      "tags": ["DET", "ADJ", "NOUN", "AUX", "VERB", "DET", "NOUN", ".", "ADP", "DET", "NOUN", "."]
-  },
-  {
-      "sentence": "The book, which was written by my favorite author, is on the bestseller list.",
-      "tags": ["DET", "NOUN", ".", "PRON", "VERB", "VERB", "ADP", "DET", "ADJ", "NOUN", ".", "VERB", "DET", "NOUN", "NOUN", "."]
-  },
-  {
-      "sentence": "The teacher asked the student to write an essay, but he forgot.",
-      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "PRT", "VERB", "DET", "NOUN", ".", "PRON", "VERB", "."]
-  },
-  {
-      "sentence": "The company's stock prices have been fluctuating wildly.",
-      "tags": ["DET", "NOUN", "NOUN", "VERB", "AUX", "VERB", "ADV", "."]
-  },
-  {
-      "sentence": "The new employee is very nervous, because it's his first day.",
-      "tags": ["DET", "ADJ", "NOUN", "VERB", "ADV", "ADJ", ".", "CONJ", "PRON", "VERB", "DET", "ADJ", "NOUN", "."]
-  },
-  {
+    {
       "sentence": "The hotel room was nice, except for the noisy air conditioner.",
       "tags": ["DET", "NOUN", "NOUN", "VERB", "ADJ", ".", "ADP", "DET", "ADJ", "NOUN", "NOUN", "."]
-  },
-  {
-      "sentence": "The student's grades have been improving steadily.",
-      "tags": ["DET", "NOUN", "NOUN", "AUX", "VERB", "ADV", "."]
-  },
-  {
-      "sentence": "The teacher gave the student a book, that was very old.",
-      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "DET", "VERB", "ADJ", "."]
-  },
-  {
-      "sentence": "The company will hire a new CEO, that has a lot of experience.",
-      "tags": ["DET", "NOUN", "AUX", "VERB", "DET", "ADJ", "NOUN", ".", "PRON", "VERB", "DET", "NOUN", "."]
-  },
-  {
-      "sentence": "The food was delicious, but the service was terrible, and the ambiance was nice.",
-      "tags": ["DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "DET", "NOUN", "VERB", "ADJ", "."]
-  },
-  {
-      "sentence": "The new policy will affect all employees, including John.",
-      "tags": ["DET", "ADJ", "NOUN", "AUX", "VERB", "DET", "NOUN", ".", "VERB", "NOUN", "."]
-  },
-  {
-      "sentence": "The book, that was written by my favorite author, is on the bestseller list.",
-      "tags": ["DET", "NOUN", ".", "PRON", "VERB", "VERB", "ADP", "DET", "ADJ", "NOUN", ".", "VERB", "DET", "NOUN", "NOUN", "."]
-  },
-  {
-      "sentence": "The teacher asked the student to write an essay, but he refused.",
-      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "PRT", "VERB", "DET", "NOUN", ".", "PRON", "VERB", "."]
-  },
-  {
-      "sentence": "The company's stock prices have been fluctuating wildly, due to the economic crisis.",
-      "tags": ["DET", "NOUN", "NOUN", "VERB", "AUX", "VERB", "ADV", ".", "ADP", "DET", "ADJ", "NOUN", "."]
-  },
-  {
-      "sentence": "The new employee is very nervous, because it's his first day, and he's not sure what to expect.",
-      "tags": ["DET", "ADJ", "NOUN", "VERB", "ADV", "ADJ", ".", "CONJ", "PRON", "VERB", "DET", "ADJ", "NOUN", "CONJ", "PRON", "VERB", "."]
-  },
-  {
-      "sentence": "The hotel room was nice, except for the noisy air conditioner, and the uncomfortable bed.",
-      "tags": ["DET", "NOUN", "NOUN", "VERB", "ADJ", ".", "ADP", "DET", "ADJ", "NOUN", "NOUN", ".", "CONJ", "DET", "ADJ", "NOUN", "."]
-  }
-]
+    },
+    {
+      "sentence": "She quickly grabbed the red apple and left.",
+      "tags": ["PRON", "ADV", "VERB", "DET", "ADJ", "NOUN", "CONJ", "VERB", "."]
+    },
+    {
+      "sentence": "He enjoys reading books on rainy days.",
+      "tags": ["PRON", "VERB", "VERB", "NOUN", "ADP", "ADJ", "NOUN", "."]
+    },
+    {
+      "sentence": "Python is a powerful programming language used worldwide.",
+      "tags": ["PROPN", "AUX", "DET", "ADJ", "NOUN", "NOUN", "VERB", "ADV", "."]
+    },
+    {
+      "sentence": "They are traveling to Italy next summer.",
+      "tags": ["PRON", "AUX", "VERB", "ADP", "PROPN", "ADJ", "NOUN", "."]
+    },
+    {
+      "sentence": "The car broke down on the highway.",
+      "tags": ["DET", "NOUN", "VERB", "PART", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "I love playing soccer with my friends.",
+      "tags": ["PRON", "VERB", "VERB", "NOUN", "ADP", "PRON", "NOUN", "."]
+    },
+    {
+      "sentence": "The weather forecast predicts heavy rain tomorrow.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "ADJ", "NOUN", "NOUN", "."]
+    },
+    {
+      "sentence": "She bought a new laptop for her studies.",
+      "tags": ["PRON", "VERB", "DET", "ADJ", "NOUN", "ADP", "PRON", "NOUN", "."]
+    },
+    {
+      "sentence": "The cake tasted delicious, but it was too sweet.",
+      "tags": ["DET", "NOUN", "VERB", "ADJ", ".", "CONJ", "PRON", "AUX", "ADV", "ADJ", "."]
+    },
+    {
+      "sentence": "We are visiting the museum this weekend.",
+      "tags": ["PRON", "AUX", "VERB", "DET", "NOUN", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "John and Mary went to the concert last night.",
+      "tags": ["PROPN", "CONJ", "PROPN", "VERB", "ADP", "DET", "NOUN", "ADJ", "NOUN", "."]
+    },
+    {
+      "sentence": "The movie was long, but it was worth watching.",
+      "tags": ["DET", "NOUN", "AUX", "ADJ", ".", "CONJ", "PRON", "AUX", "ADJ", "VERB", "."]
+    },
+    {
+      "sentence": "My phone battery died during the call.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "She waited patiently for the bus to arrive.",
+      "tags": ["PRON", "VERB", "ADV", "ADP", "DET", "NOUN", "PART", "VERB", "."]
+    },
+    {
+      "sentence": "The presentation went well and the audience was engaged.",
+      "tags": ["DET", "NOUN", "VERB", "ADV", "CONJ", "DET", "NOUN", "AUX", "VERB", "."]
+    },
+    {
+      "sentence": "He forgot to bring his umbrella this morning.",
+      "tags": ["PRON", "VERB", "PART", "VERB", "PRON", "NOUN", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "We will meet at the coffee shop in an hour.",
+      "tags": ["PRON", "AUX", "VERB", "ADP", "DET", "NOUN", "NOUN", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "The kids are playing in the park.",
+      "tags": ["DET", "NOUN", "AUX", "VERB", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "He has been working on the project for weeks.",
+      "tags": ["PRON", "AUX", "AUX", "VERB", "ADP", "DET", "NOUN", "ADP", "NOUN", "."]
+    },
+    {
+      "sentence": "Her favorite color is blue.",
+      "tags": ["PRON", "ADJ", "NOUN", "AUX", "ADJ", "."]
+    },
+    {
+      "sentence": "The restaurant offers a variety of dishes.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "ADP", "NOUN", "."]
+    },
+    {
+      "sentence": "He applied for the job last month.",
+      "tags": ["PRON", "VERB", "ADP", "DET", "NOUN", "ADJ", "NOUN", "."]
+    },
+    {
+      "sentence": "The sun sets earlier in the winter.",
+      "tags": ["DET", "NOUN", "VERB", "ADV", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "They traveled to Japan during their vacation.",
+      "tags": ["PRON", "VERB", "ADP", "PROPN", "ADP", "PRON", "NOUN", "."]
+    },
+    {
+      "sentence": "The company announced a new product yesterday.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "ADJ", "NOUN", "NOUN", "."]
+    },
+    {
+      "sentence": "The cat slept on the couch all day.",
+      "tags": ["DET", "NOUN", "VERB", "ADP", "DET", "NOUN", "ADV", "NOUN", "."]
+    },
+    {
+      "sentence": "She decided to cancel the meeting.",
+      "tags": ["PRON", "VERB", "PART", "VERB", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "We bought groceries for the week.",
+      "tags": ["PRON", "VERB", "NOUN", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "The birds are chirping in the trees.",
+      "tags": ["DET", "NOUN", "AUX", "VERB", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "She found a wallet on the sidewalk.",
+      "tags": ["PRON", "VERB", "DET", "NOUN", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "The flowers bloomed beautifully this spring.",
+      "tags": ["DET", "NOUN", "VERB", "ADV", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "They cleaned the house before their guests arrived.",
+      "tags": ["PRON", "VERB", "DET", "NOUN", "ADP", "PRON", "NOUN", "VERB", "."]
+    },
+    {
+      "sentence": "He painted the walls blue.",
+      "tags": ["PRON", "VERB", "DET", "NOUN", "ADJ", "."]
+    },
+    {
+      "sentence": "The flight was delayed due to bad weather.",
+      "tags": ["DET", "NOUN", "AUX", "VERB", "ADP", "ADP", "ADJ", "NOUN", "."]
+    },
+    {
+      "sentence": "She enjoys hiking in the mountains.",
+      "tags": ["PRON", "VERB", "NOUN", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "The book was interesting but hard to follow.",
+      "tags": ["DET", "NOUN", "AUX", "ADJ", "CONJ", "ADJ", "PART", "VERB", "."]
+    },
+    {
+      "sentence": "He spends his weekends watching movies.",
+      "tags": ["PRON", "VERB", "PRON", "NOUN", "VERB", "NOUN", "."]
+    },
+    {
+      "sentence": "We need to submit the report by Friday.",
+      "tags": ["PRON", "VERB", "PART", "VERB", "DET", "NOUN", "ADP", "PROPN", "."]
+    },
+    {
+      "sentence": "The teacher explained the problem in detail.",
+      "tags": ["DET", "NOUN", "VERB", "DET", "NOUN", "ADP", "NOUN", "."]
+    },
+    {
+      "sentence": "He plays basketball with his friends every Sunday.",
+      "tags": ["PRON", "VERB", "NOUN", "ADP", "PRON", "NOUN", "DET", "PROPN", "."]
+    },
+    {
+      "sentence": "She loves listening to music while studying.",
+      "tags": ["PRON", "VERB", "VERB", "ADP", "NOUN", "ADP", "VERB", "."]
+    },
+    {
+      "sentence": "The coffee shop opens at 8 a.m. every day.",
+      "tags": ["DET", "NOUN", "NOUN", "VERB", "ADP", "NUM", "NOUN", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "The train arrived on time.",
+      "tags": ["DET", "NOUN", "VERB", "ADP", "NOUN", "."]
+    },
+    {
+      "sentence": "She is wearing a beautiful dress today.",
+      "tags": ["PRON", "AUX", "VERB", "DET", "ADJ", "NOUN", "NOUN", "."]
+    },
+    {
+      "sentence": "We are baking a cake for the party.",
+      "tags": ["PRON", "AUX", "VERB", "DET", "NOUN", "ADP", "DET", "NOUN", "."]
+    },
+    {
+      "sentence": "The concert starts at 7 p.m.",
+      "tags": ["DET", "NOUN", "VERB", "ADP", "NUM", "NOUN", "."]
+    },
+    {
+      "sentence": "They bought tickets for the game next week.",
+      "tags": ["PRON", "VERB", "NOUN", "ADP", "DET", "NOUN", "ADJ", "NOUN", "."]
+    },
+    {
+      "sentence": "The storm caused significant damage to the town.",
+      "tags": ["DET", "NOUN", "VERB", "ADJ", "NOUN", "ADP", "DET", "NOUN", "."]
+    }
+  ]
+  

@@ -2,8 +2,8 @@ import os
 import json
 import torch
 import logging
-from crf_training_GRU import CRFModel as GRUModel, Config as GRUConfig, prepare_data as prepare_data_GRU
-from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig, prepare_data as prepare_data_LSTM
+from crf_training_GRU import CRFModel as GRUModel, Config as GRUConfig
+from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig
 
 def setup_logger(name, log_file, level=logging.INFO):
     """Function to setup as many loggers as you want, logging to both a file and the console."""
@@ -55,12 +55,12 @@ def initialize_model(model_type):
         logger.info("Initializing GRU model...")
         config = GRUConfig()
         model_class = GRUModel
-        model_path = 'Models/best_crf_pos_GRU.pth'
+        model_path = 'Models/crf_pos_GRU.pth'
     elif model_type.lower() == "lstm":
         logger.info("Initializing LSTM model...")
         config = LSTMConfig()
         model_class = LSTMModel
-        model_path = 'Models/best_crf_pos_LSTM.pth'
+        model_path = 'Models/crf_pos_LSTM.pth'
     else:
         raise ValueError("Invalid model type. Choose between 'GRU' or 'LSTM'.")
     
@@ -75,7 +75,9 @@ def initialize_model(model_type):
         model_params['vocab_size'],
         model_params['tagset_size'],
         model_params['embedding_dim'],
-        model_params['hidden_dim']
+        model_params['hidden_dim'],
+        config.num_layers,
+        config.dropout
     )
     model.load_state_dict(torch.load(model_path))
     

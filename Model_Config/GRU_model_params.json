@@ -1,1 +1,1 @@
-{"vocab_size": 49815, "tagset_size": 12, "embedding_dim": 256, "hidden_dim": 512}
+{"vocab_size": 49817, "tagset_size": 13, "embedding_dim": 300, "hidden_dim": 256}

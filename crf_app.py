@@ -1,11 +1,10 @@
 import os
 import json
-import torch
 import numpy as np
+import pandas as pd
+import seaborn as sns
 import streamlit as st
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
 from crf_inference import initialize_model, infer_sentence
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 

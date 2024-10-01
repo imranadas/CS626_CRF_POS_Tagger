@@ -1,17 +1,104 @@
-2024-10-01 18:25:44,037 - crf_inference - INFO - Initializing GRU model...
-2024-10-01 18:25:44,074 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
-2024-10-01 18:25:44,077 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
-2024-10-01 18:25:44,410 - crf_inference - INFO - GRU model loaded successfully from Models/best_crf_pos_GRU.pth
-2024-10-01 18:25:44,410 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
-2024-10-01 18:25:53,069 - crf_inference - INFO - Input Sentence: This should resolve the serialization issue you're encountering. After making these changes, try running your evaluation script again.
-2024-10-01 18:25:53,185 - crf_inference - INFO - Output Tagged Sentence: This<DET> should<VERB> resolve<VERB> the<NUM> serialization<ADJ> issue<NOUN> you're<PRT> encountering.<DET> After<PRT> making<VERB> these<DET> changes,<DET> try<NOUN> running<VERB> your<DET> evaluation<NOUN> script<VERB> again.<DET>
-2024-10-01 18:26:18,100 - crf_inference - INFO - Exiting inference loop.
-2024-10-01 18:33:56,466 - crf_inference - INFO - Initializing LSTM model...
-2024-10-01 18:33:56,501 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
-2024-10-01 18:33:56,508 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
-2024-10-01 18:33:56,866 - crf_inference - INFO - LSTM model loaded successfully from Models/best_crf_pos_LSTM.pth
-2024-10-01 18:33:56,866 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
-2024-10-01 18:34:01,182 - crf_inference - INFO - Input Sentence: This should resolve the serialization issue you're encountering. After making these changes, try running your evaluation script again.
-2024-10-01 18:34:01,276 - crf_inference - INFO - Output Tagged Sentence: This<DET> should<VERB> resolve<VERB> the<DET> serialization<DET> issue<NOUN> you're<PRT> encountering.<DET> After<ADP> making<VERB> these<DET> changes,<DET> try<NOUN> running<VERB> your<DET> evaluation<NOUN> script<NOUN> again.<DET>
-2024-10-01 18:34:04,083 - crf_inference - INFO - Exiting inference loop.
-
+2024-10-02 02:14:32,919 - crf_inference - INFO - Initializing GRU model...
+2024-10-02 02:14:32,947 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
+2024-10-02 02:14:32,962 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
+2024-10-02 02:14:33,454 - crf_inference - INFO - GRU model loaded successfully from Models/crf_pos_GRU.pth
+2024-10-02 02:14:33,454 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
+2024-10-02 02:14:49,541 - crf_inference - INFO - Input Sentence: Prince Hamlet of Denmark is the son of the recently deceased King Hamlet, and nephew of King Claudius, his father's brother and successor. Claudius hastily married King Hamlet's widow, Gertrude, Hamlet's mother, and took the throne for himself. Denmark has a long-standing feud with neighbouring Norway, in which King Hamlet slew King Fortinbras of Norway in a battle some years ago. Although Denmark defeated Norway and the Norwegian throne fell to King Fortinbras's infirm brother, Denmark fears that an invasion led by the dead Norwegian king's son, Prince Fortinbras, is imminent.
+2024-10-02 02:14:49,686 - crf_inference - INFO - Output Tagged Sentence: Prince<NOUN> Hamlet<NOUN> of<ADP> Denmark<NOUN> is<VERB> the<DET> son<NOUN> of<ADP> the<DET> recently<ADV> deceased<ADJ> King<NOUN> Hamlet,<NOUN> and<CONJ> nephew<NOUN> of<ADP> King<NOUN> Claudius,<NOUN> his<DET> father's<NOUN> brother<NOUN> and<CONJ> successor.<NOUN> Claudius<NOUN> hastily<ADV> married<VERB> King<NOUN> Hamlet's<NOUN> widow,<NOUN> Gertrude,<NOUN> Hamlet's<NOUN> mother,<NOUN> and<CONJ> took<VERB> the<DET> throne<NOUN> for<ADP> himself.<NOUN> Denmark<NOUN> has<VERB> a<DET> long-standing<NOUN> feud<NOUN> with<ADP> neighbouring<NOUN> Norway,<NOUN> in<ADP> which<DET> King<NOUN> Hamlet<NOUN> slew<NOUN> King<NOUN> Fortinbras<NOUN> of<ADP> Norway<NOUN> in<ADP> a<DET> battle<NOUN> some<DET> years<NOUN> ago.<NOUN> Although<ADP> Denmark<NOUN> defeated<VERB> Norway<NOUN> and<CONJ> the<DET> Norwegian<ADJ> throne<NOUN> fell<VERB> to<ADP> King<NOUN> Fortinbras's<NOUN> infirm<ADJ> brother,<NOUN> Denmark<NOUN> fears<NOUN> that<ADP> an<DET> invasion<NOUN> led<VERB> by<ADP> the<DET> dead<ADJ> Norwegian<ADJ> king's<NOUN> son,<NOUN> Prince<NOUN> Fortinbras,<NOUN> is<VERB> imminent.<NOUN>
+2024-10-02 02:14:56,877 - crf_inference - INFO - Exiting inference loop.
+2024-10-02 02:15:03,984 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:15:04,031 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:15:04,049 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:15:04,541 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:15:04,541 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
+2024-10-02 02:15:06,569 - crf_inference - INFO - Input Sentence: Prince Hamlet of Denmark is the son of the recently deceased King Hamlet, and nephew of King Claudius, his father's brother and successor. Claudius hastily married King Hamlet's widow, Gertrude, Hamlet's mother, and took the throne for himself. Denmark has a long-standing feud with neighbouring Norway, in which King Hamlet slew King Fortinbras of Norway in a battle some years ago. Although Denmark defeated Norway and the Norwegian throne fell to King Fortinbras's infirm brother, Denmark fears that an invasion led by the dead Norwegian king's son, Prince Fortinbras, is imminent.
+2024-10-02 02:15:06,750 - crf_inference - INFO - Output Tagged Sentence: Prince<NOUN> Hamlet<NOUN> of<ADP> Denmark<NOUN> is<VERB> the<DET> son<NOUN> of<ADP> the<DET> recently<ADV> deceased<ADJ> King<NOUN> Hamlet,<NOUN> and<CONJ> nephew<NOUN> of<ADP> King<NOUN> Claudius,<NOUN> his<DET> father's<NOUN> brother<NOUN> and<CONJ> successor.<NOUN> Claudius<NOUN> hastily<ADV> married<VERB> King<NOUN> Hamlet's<NOUN> widow,<NOUN> Gertrude,<NOUN> Hamlet's<NOUN> mother,<NOUN> and<CONJ> took<VERB> the<DET> throne<NOUN> for<ADP> himself.<NOUN> Denmark<NOUN> has<VERB> a<DET> long-standing<NOUN> feud<NOUN> with<ADP> neighbouring<NOUN> Norway,<NOUN> in<ADP> which<DET> King<NOUN> Hamlet<NOUN> slew<NOUN> King<NOUN> Fortinbras<NOUN> of<ADP> Norway<NOUN> in<ADP> a<DET> battle<NOUN> some<DET> years<NOUN> ago.<NOUN> Although<ADP> Denmark<NOUN> defeated<VERB> Norway<NOUN> and<CONJ> the<DET> Norwegian<ADJ> throne<NOUN> fell<VERB> to<ADP> King<NOUN> Fortinbras's<NOUN> infirm<ADJ> brother,<NOUN> Denmark<NOUN> fears<NOUN> that<ADP> an<DET> invasion<NOUN> led<VERB> by<ADP> the<DET> dead<ADJ> Norwegian<ADJ> king's<NOUN> son,<NOUN> Prince<NOUN> Fortinbras,<NOUN> is<VERB> imminent.<NOUN>
+2024-10-02 02:15:20,813 - crf_inference - INFO - Input Sentence: quit
+2024-10-02 02:15:20,821 - crf_inference - INFO - Output Tagged Sentence: quit<VERB>
+2024-10-02 02:15:26,016 - crf_inference - INFO - Input Sentence: Quit
+2024-10-02 02:15:26,018 - crf_inference - INFO - Output Tagged Sentence: Quit<VERB>
+2024-10-02 02:15:37,577 - crf_inference - INFO - Exiting inference loop.
+2024-10-02 02:18:50,377 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:18:50,410 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:18:50,432 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:18:50,779 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:19:55,764 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:19:55,796 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:19:55,814 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:19:56,123 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:20:10,079 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:20:10,080 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:20:10,095 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:20:10,143 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:20:10,144 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:20:10,163 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:20:10,407 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:20:10,409 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:20:26,001 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:20:26,003 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:20:26,017 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:20:26,193 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:20:59,411 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:20:59,413 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:20:59,427 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:20:59,483 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:20:59,483 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:20:59,500 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:20:59,739 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:20:59,888 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:22:01,258 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:22:01,259 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:22:01,278 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:22:01,323 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:22:01,323 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:22:01,344 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:22:01,548 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:22:01,548 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:22:26,576 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:22:26,577 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:22:26,590 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:22:26,656 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:22:26,657 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:22:26,681 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:22:26,871 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:22:27,002 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:23:54,060 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:23:54,061 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:23:54,077 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:23:54,124 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:23:54,126 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:23:54,145 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:23:54,371 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:23:54,371 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:24:49,947 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:24:49,948 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:24:49,963 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:24:50,022 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:24:50,024 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:24:50,044 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:24:50,252 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:24:50,252 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:28:29,105 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:28:29,137 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:28:29,160 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:28:29,534 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:28:31,857 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:28:31,858 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:28:31,874 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:28:32,016 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:28:32,138 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:28:32,140 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:28:32,156 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:28:32,350 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:31:43,398 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 02:31:43,427 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 02:31:43,446 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 02:31:43,781 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 02:32:28,011 - crf_inference - INFO - Initializing GRU model...
+2024-10-02 02:32:28,012 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
+2024-10-02 02:32:28,028 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
+2024-10-02 02:32:28,186 - crf_inference - INFO - GRU model loaded successfully from Models/crf_pos_GRU.pth
+2024-10-02 02:32:58,308 - crf_inference - INFO - Initializing GRU model...
+2024-10-02 02:32:58,309 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
+2024-10-02 02:32:58,323 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
+2024-10-02 02:32:58,532 - crf_inference - INFO - GRU model loaded successfully from Models/crf_pos_GRU.pth

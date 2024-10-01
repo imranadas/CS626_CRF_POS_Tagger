@@ -6,7 +6,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.nn.utils.rnn import pad_sequence
-from crf_training_LSTM import CRFModel, Config, prepare_data
+from crf_training_LSTM import CRFModel, Config, prepare_data, extract_features
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, fbeta_score
 
 def setup_logger(name, log_file, level=logging.INFO):
@@ -38,18 +38,25 @@ def setup_logger(name, log_file, level=logging.INFO):
 logger = setup_logger('crf_eval_lstm', 'Logs/crf_pos_LSTM_Evaluation_Log.log')
 
 # Check for GPU availability
-use_cuda = torch.cuda.is_available()
+config = Config()
+use_cuda = config.cuda
 logger.info(f"Using CUDA: {use_cuda}")
 
-config = Config()
-
 # Load the trained model
-model_path = 'Models/best_crf_pos_LSTM.pth'
+model_path = 'Models/crf_pos_LSTM.pth'
+
+def load_model_params():
+    with open('Model_Config/LSTM_model_params.json', 'r') as f:
+        return json.load(f)
+
+def load_mappings():
+    with open('Model_Config/LSTM_word_to_ix.json', 'r') as f:
+        word_to_ix = json.load(f)
+    with open('Model_Config/LSTM_tag_to_ix.json', 'r') as f:
+        tag_to_ix = json.load(f)
+    return word_to_ix, tag_to_ix
 
 # Evaluate the model
-from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, fbeta_score
-
-# Modify the per-tag metric calculation
 def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
     ix_to_tag = {v: k for k, v in tag_to_ix.items()}
     all_tags = [ix_to_tag[i] for i in range(len(tag_to_ix))]
@@ -60,25 +67,24 @@ def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
     total_sentences = len(tagged_sentences)
     logger.info(f"Starting evaluation for {total_sentences} sentences...")
 
-    for idx, (sentence_indices, true_tag_indices) in enumerate(tagged_sentences):
-        sentence_tensor = pad_sequence([torch.tensor(sentence_indices)], batch_first=True)
-
-        with torch.no_grad():
+    model.eval()
+    with torch.no_grad():
+        for idx, (sentence_indices, tag_indices) in enumerate(tagged_sentences):
+            sentence_tensor = torch.tensor([sentence_indices]).long()
             if use_cuda:
                 sentence_tensor = sentence_tensor.cuda()
-            predicted_tags = model(sentence_tensor)
-            predicted_tags = predicted_tags[0]
+            
+            predicted_tags = model(sentence_tensor)[0]  # Get the first (and only) element of the batch
 
-        true_tags = [ix_to_tag[idx] for idx in true_tag_indices]
-        predicted_tags = [ix_to_tag[idx] for idx in predicted_tags]
+            true_tags = [ix_to_tag[i] for i in tag_indices]
+            pred_tags = [ix_to_tag[i] for i in predicted_tags]
 
-        y_true.extend(true_tags)
-        y_pred.extend(predicted_tags)
+            y_true.extend(true_tags)
+            y_pred.extend(pred_tags)
 
-        # Log progress every 100 sentences or after processing all sentences
-        if (idx + 1) % 100 == 0 or (idx + 1) == total_sentences:
-            progress_percentage = (idx + 1) / total_sentences * 100
-            logger.info(f"Progress: {progress_percentage:.2f}% ({idx + 1} out of {total_sentences} sentences processed)")
+            if (idx + 1) % 100 == 0 or (idx + 1) == total_sentences:
+                progress_percentage = (idx + 1) / total_sentences * 100
+                logger.info(f"Progress: {progress_percentage:.2f}% ({idx + 1} out of {total_sentences} sentences processed)")
 
     # Calculate overall metrics
     precision, recall, f1, _ = precision_recall_fscore_support(y_true, y_pred, average='weighted', zero_division=0)
@@ -102,7 +108,7 @@ def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
             y_true, y_pred, labels=[tag], average=None, zero_division=0
         )
         per_tag_metrics[tag] = {
-            'precision': tag_precision[0],  # Average None returns arrays; extract first element
+            'precision': tag_precision[0],
             'recall': tag_recall[0],
             'f1': tag_f1[0]
         }
@@ -124,7 +130,6 @@ def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
 
     logger.info("Most mismatched tags identified.")
 
-    # Return all_tags along with the results
     return overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all_tags
 
 # Save metrics and visualizations
@@ -166,16 +171,24 @@ def save_metrics(overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all
         json.dump(most_mismatched_tags_serializable, f, indent=4)
     logger.info(f"Most mismatched tags saved to 'Models_Metrics/{model_type}_most_mismatched_tags.json'.")
 
-
 # Main execution
 if __name__ == '__main__':
-    training_data, word_to_ix, tag_to_ix = prepare_data()
-    model = CRFModel(len(word_to_ix), len(tag_to_ix), config.embedding_dim, config.hidden_dim)
+    model_params = load_model_params()
+    word_to_ix, tag_to_ix = load_mappings()
+    
+    model = CRFModel(
+        model_params['vocab_size'],
+        model_params['tagset_size'],
+        model_params['embedding_dim'],
+        model_params['hidden_dim'],
+        config.num_layers,
+        config.dropout
+    )
     model.load_state_dict(torch.load(model_path))
     if config.cuda:
         model = model.cuda()
-        
-    # Assuming you have already obtained these variables from the evaluate_model function
+    
+    training_data, _, _ = prepare_data()
     overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all_tags = evaluate_model(training_data, model, word_to_ix, tag_to_ix, use_cuda)
 
     # Save metrics with the correct parameters
