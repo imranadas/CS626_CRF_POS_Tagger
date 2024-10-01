@@ -1,30 +1,53 @@
+import os
+import json
 import torch
 import logging
-from collections import defaultdict
 from crf_training_GRU import CRFModel as GRUModel, Config as GRUConfig, prepare_data as prepare_data_GRU
 from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig, prepare_data as prepare_data_LSTM
 
-# Function to reset logging handlers
-def reset_logging():
-    logger = logging.getLogger()
-    if logger.hasHandlers():
-        logger.handlers.clear()
+def setup_logger(name, log_file, level=logging.INFO):
+    """Function to setup as many loggers as you want, logging to both a file and the console."""
+    # Ensure the directory for the log file exists
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    
+    # File handler to write logs to the specified file
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setFormatter(formatter)
+    
+    # Stream handler to print logs to the console
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    
+    # Get or create a logger
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    
+    # Prevent duplicate logging by clearing existing handlers (if needed)
+    if not logger.hasHandlers():
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+    
     return logger
 
-# Set up logging (clearing previous handlers first)
-logger = reset_logging()
-logger.setLevel(logging.INFO)
+logger = setup_logger('crf_inference', 'Logs/crf_pos_inference_log.log')
 
-# Console handler for logging
-console_handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
+def load_model_params(model_type):
+    with open(f'Model_Config/{model_type}_model_params.json', 'r') as f:
+        model_params = json.load(f)
+    
+    logger.info(f"{model_type} model parameters loaded from Model_Config/{model_type}_model_params.json")
+    return model_params
 
-# File handler for logging
-file_handler = logging.FileHandler('Logs/crf_pos_inference_log.log')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+def load_mappings(model_type):
+    with open(f'Model_Config/{model_type}_word_to_ix.json', 'r') as f:
+        word_to_ix = json.load(f)
+    with open(f'Model_Config/{model_type}_tag_to_ix.json', 'r') as f:
+        tag_to_ix = json.load(f)
+    
+    logger.info(f"{model_type} word and tag mappings loaded from JSON files")
+    return word_to_ix, tag_to_ix
 
 # Function to initialize the model
 def initialize_model(model_type):
@@ -32,22 +55,28 @@ def initialize_model(model_type):
         logger.info("Initializing GRU model...")
         config = GRUConfig()
         model_class = GRUModel
-        prepare_data = prepare_data_GRU
         model_path = 'Models/best_crf_pos_GRU.pth'
     elif model_type.lower() == "lstm":
         logger.info("Initializing LSTM model...")
         config = LSTMConfig()
         model_class = LSTMModel
-        prepare_data = prepare_data_LSTM
         model_path = 'Models/best_crf_pos_LSTM.pth'
     else:
         raise ValueError("Invalid model type. Choose between 'GRU' or 'LSTM'.")
     
-    # Prepare the data (to get word_to_ix and tag_to_ix)
-    training_data, word_to_ix, tag_to_ix = prepare_data()
+    # Load model parameters
+    model_params = load_model_params(model_type.upper())
+    
+    # Load word and tag mappings
+    word_to_ix, tag_to_ix = load_mappings(model_type.upper())
     
     # Initialize model
-    model = model_class(len(word_to_ix), len(tag_to_ix), config.embedding_dim, config.hidden_dim)
+    model = model_class(
+        model_params['vocab_size'],
+        model_params['tagset_size'],
+        model_params['embedding_dim'],
+        model_params['hidden_dim']
+    )
     model.load_state_dict(torch.load(model_path))
     
     # If CUDA is available, move model to GPU
@@ -59,25 +88,21 @@ def initialize_model(model_type):
 
 # Function to process input sentence and predict tags
 def infer_sentence(model, sentence, word_to_ix, tag_to_ix, use_cuda):
-    # Create reverse mapping for tag indices to tag names
     ix_to_tag = {v: k for k, v in tag_to_ix.items()}
     
-    # Tokenize input sentence and extract features
-    sentence_indices = [word_to_ix.get(word.lower(), 0) for word in sentence.split()]
+    # Handle unknown words by using a special token or the most common word
+    unk_token = word_to_ix.get('<UNK>', 0)  # Use 0 if <UNK> is not defined
+    sentence_indices = [word_to_ix.get(word.lower(), unk_token) for word in sentence.split()]
     sentence_tensor = torch.tensor([sentence_indices], dtype=torch.long)
 
-    # Move to GPU if CUDA is enabled
     if use_cuda:
         sentence_tensor = sentence_tensor.cuda()
     
-    # Inference
     with torch.no_grad():
         predicted_tags = model(sentence_tensor)
     
-    # Convert predicted indices to tag names
     predicted_tags = [ix_to_tag[idx] for idx in predicted_tags[0]]
     
-    # Return words with predicted tags
     result = " ".join([f"{word}<{tag}>" for word, tag in zip(sentence.split(), predicted_tags)])
     return result
 
@@ -94,23 +119,17 @@ def run_inferencing_loop():
     logger.info("Starting inference loop. Type 'exit' to quit.")
 
     while True:
-        # Input sentence from user
         sentence = input("Enter a sentence: ").strip()
         
         if sentence.lower() == 'exit':
             logger.info("Exiting inference loop.")
             break
         
-        # Log the input sentence
         logger.info(f"Input Sentence: {sentence}")
         
-        # Get the POS tagging for the sentence
         result = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
         
-        # Log the output sentence
         logger.info(f"Output Tagged Sentence: {result}")
-        
-        # Display the result
         print(result)
 
 # Entry point of the script

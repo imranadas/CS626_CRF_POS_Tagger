@@ -1,3 +1,5 @@
+import os
+import json
 import nltk
 import torch
 import random
@@ -24,19 +26,36 @@ class Config:
         self.embedding_dim = 256
         self.hidden_dim = 512
         self.cuda = torch.cuda.is_available()
-        self.model_save_path = 'crf_pos_LSTM.pth'
+        self.model_save_path = 'Models/crf_pos_LSTM.pth'
         self.patience = 5
 
-# Set up logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-file_handler = logging.FileHandler('Logs/crf_pos_LSTM_Training_Log.log')
-console_handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-console_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
+def setup_logger(name, log_file, level=logging.INFO):
+    """Function to setup as many loggers as you want, logging to both a file and the console."""
+    # Ensure the directory for the log file exists
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    
+    # File handler to write logs to the specified file
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setFormatter(formatter)
+    
+    # Stream handler to print logs to the console
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    
+    # Get or create a logger
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    
+    # Prevent duplicate logging by clearing existing handlers (if needed)
+    if not logger.hasHandlers():
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+    
+    return logger
+
+logger = setup_logger('crf_train_lstm', 'Logs/crf_pos_LSTM_Training_Log.log')
 
 # Initialize stemmer
 stemmer = PorterStemmer()
@@ -76,6 +95,30 @@ def prepare_data():
 
     logger.info(f'Completed data preparation. Total training samples: {len(training_data)}')
     return training_data, word_to_ix, tag_to_ix
+
+def save_model_params(word_to_ix, tag_to_ix, config):
+    # Ensure the directory exists
+    os.makedirs('Model_Config', exist_ok=True)
+    
+    model_params = {
+        'vocab_size': len(word_to_ix),
+        'tagset_size': len(tag_to_ix),
+        'embedding_dim': config.embedding_dim,
+        'hidden_dim': config.hidden_dim
+    }
+    
+    with open('Model_Config/LSTM_model_params.json', 'w') as f:
+        json.dump(model_params, f)
+    
+    # Save word_to_ix mapping
+    with open('Model_Config/LSTM_word_to_ix.json', 'w') as f:
+        json.dump(word_to_ix, f)
+    
+    # Save tag_to_ix mapping
+    with open('Model_Config/LSTM_tag_to_ix.json', 'w') as f:
+        json.dump(tag_to_ix, f)
+    
+    logger.info("Model parameters and mappings saved to Model_Config/LSTM_ JSON files")
 
 # Define the model
 class CRFModel(nn.Module):
@@ -149,11 +192,15 @@ def train_model(model, train_data, val_data, config):
         # Validate after each epoch
         val_accuracy = validate_model(model, val_data, config)
         
+        os.makedirs('Models', exist_ok=True)
+        
         # Check for improvement
         if val_accuracy > best_accuracy:
             best_accuracy = val_accuracy
             patience_counter = 0
-            torch.save(model.state_dict(), 'best_' + config.model_save_path)
+            # Save the best model
+            best_model_path = os.path.join('Models', 'Best_' + os.path.basename(config.model_save_path))
+            torch.save(model.state_dict(), best_model_path)
             logger.info(f'New best model saved with accuracy: {best_accuracy * 100:.2f}%')
         else:
             patience_counter += 1
@@ -164,7 +211,8 @@ def train_model(model, train_data, val_data, config):
             break
 
     # Always save the final model after training
-    torch.save(model.state_dict(), 'final_' + config.model_save_path)
+    final_model_path = os.path.join('Models', 'Final_' + os.path.basename(config.model_save_path))
+    torch.save(model.state_dict(), final_model_path)
     logger.info(f'Final model saved at {config.model_save_path}')
 
     logger.info(f'Training completed. Best Validation Accuracy: {best_accuracy * 100:.2f}%')
@@ -211,6 +259,9 @@ def validate_model(model, val_data, config):
 if __name__ == "__main__":
     config = Config()
     training_data, word_to_ix, tag_to_ix = prepare_data()
+    
+    # Save model parameters
+    save_model_params(word_to_ix, tag_to_ix, config)
     
     # Set the random seed for reproducibility
     random.seed(42)
