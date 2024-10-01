@@ -1,0 +1,40 @@
+2024-10-01 18:25:44,037 - crf_inference - INFO - Initializing GRU model...
+2024-10-01 18:25:44,074 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
+2024-10-01 18:25:44,077 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
+2024-10-01 18:25:44,410 - crf_inference - INFO - GRU model loaded successfully from Models/best_crf_pos_GRU.pth
+2024-10-01 18:25:44,410 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
+2024-10-01 18:25:53,069 - crf_inference - INFO - Input Sentence: This should resolve the serialization issue you're encountering. After making these changes, try running your evaluation script again.
+2024-10-01 18:25:53,185 - crf_inference - INFO - Output Tagged Sentence: This<DET> should<VERB> resolve<VERB> the<NUM> serialization<ADJ> issue<NOUN> you're<PRT> encountering.<DET> After<PRT> making<VERB> these<DET> changes,<DET> try<NOUN> running<VERB> your<DET> evaluation<NOUN> script<VERB> again.<DET>
+2024-10-01 18:26:18,100 - crf_inference - INFO - Exiting inference loop.
+2024-10-01 18:33:56,466 - crf_inference - INFO - Initializing LSTM model...
+2024-10-01 18:33:56,501 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-01 18:33:56,508 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-01 18:33:56,866 - crf_inference - INFO - LSTM model loaded successfully from Models/best_crf_pos_LSTM.pth
+2024-10-01 18:33:56,866 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
+2024-10-01 18:34:01,182 - crf_inference - INFO - Input Sentence: This should resolve the serialization issue you're encountering. After making these changes, try running your evaluation script again.
+2024-10-01 18:34:01,276 - crf_inference - INFO - Output Tagged Sentence: This<DET> should<VERB> resolve<VERB> the<DET> serialization<DET> issue<NOUN> you're<PRT> encountering.<DET> After<ADP> making<VERB> these<DET> changes,<DET> try<NOUN> running<VERB> your<DET> evaluation<NOUN> script<NOUN> again.<DET>
+2024-10-01 18:34:04,083 - crf_inference - INFO - Exiting inference loop.
+2024-10-01 19:01:29,129 - crf_inference - INFO - Initializing LSTM model...
+2024-10-01 19:01:29,165 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-01 19:01:29,181 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-01 19:01:29,551 - crf_inference - INFO - LSTM model loaded successfully from Models/best_crf_pos_LSTM.pth
+2024-10-01 19:02:00,557 - crf_inference - INFO - Initializing LSTM model...
+2024-10-01 19:02:00,557 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-01 19:02:00,571 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-01 19:02:00,845 - crf_inference - INFO - LSTM model loaded successfully from Models/best_crf_pos_LSTM.pth
+2024-10-01 19:02:19,886 - crf_inference - INFO - Initializing GRU model...
+2024-10-01 19:02:19,887 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
+2024-10-01 19:02:19,900 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
+2024-10-01 19:02:20,082 - crf_inference - INFO - GRU model loaded successfully from Models/best_crf_pos_GRU.pth
+2024-10-01 19:04:56,982 - crf_inference - INFO - Initializing LSTM model...
+2024-10-01 19:04:57,020 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-01 19:04:57,037 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-01 19:04:57,377 - crf_inference - INFO - LSTM model loaded successfully from Models/best_crf_pos_LSTM.pth
+2024-10-01 19:05:13,524 - crf_inference - INFO - Initializing LSTM model...
+2024-10-01 19:05:13,525 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-01 19:05:13,543 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-01 19:05:13,704 - crf_inference - INFO - LSTM model loaded successfully from Models/best_crf_pos_LSTM.pth
+2024-10-01 19:05:46,725 - crf_inference - INFO - Initializing GRU model...
+2024-10-01 19:05:46,726 - crf_inference - INFO - GRU model parameters loaded from Model_Config/GRU_model_params.json
+2024-10-01 19:05:46,747 - crf_inference - INFO - GRU word and tag mappings loaded from JSON files
+2024-10-01 19:05:46,965 - crf_inference - INFO - GRU model loaded successfully from Models/best_crf_pos_GRU.pth

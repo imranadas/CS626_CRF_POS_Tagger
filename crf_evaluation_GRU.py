@@ -175,4 +175,4 @@ if __name__ == '__main__':
     overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all_tags = evaluate_model(training_data, model, word_to_ix, tag_to_ix, use_cuda)
 
     # Save metrics with the correct parameters
-    save_metrics(overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all_tags, "LSTM")
+    save_metrics(overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all_tags, "GRU")

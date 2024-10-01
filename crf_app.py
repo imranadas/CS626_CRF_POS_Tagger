@@ -1,101 +1,111 @@
-import streamlit as st
+import os
+import json
 import torch
 import numpy as np
-import json
-import pandas as pd
+import streamlit as st
 import matplotlib.pyplot as plt
-from PIL import Image
+import seaborn as sns
+import pandas as pd
+from crf_inference import initialize_model, infer_sentence
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
-# Import the necessary components from your existing scripts
-from crf_training_GRU import CRFModel as GRUModel, Config as GRUConfig, prepare_data as prepare_data_GRU
-from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig, prepare_data as prepare_data_LSTM
+# Set page configuration
+st.set_page_config(page_title="CRF POS Tagger", layout="wide")
 
-# Function to load model and necessary data
-def load_model(model_type):
-    if model_type == "GRU":
-        config = GRUConfig()
-        model_class = GRUModel
-        prepare_data = prepare_data_GRU
-        model_path = 'Models/best_crf_pos_GRU.pth'
+# Set up the sidebar
+st.sidebar.title("CRF POS Tagger")
+model_type = st.sidebar.selectbox("Select Model", ["LSTM", "GRU"])
+
+# Load the model and mappings
+model, word_to_ix, tag_to_ix, config = initialize_model(model_type)
+
+@st.cache_data
+def load_test_data():
+    with open("test_data.json", "r") as f:
+        test_data = json.load(f)
+    return test_data
+
+# Main page layout
+st.title("CRF POS Tagger")
+
+# Sentence input and prediction
+st.header("Input Sentence")
+input_sentence = st.text_area("Enter a sentence", height=100)
+
+if st.button("Predict Tags"):
+    result = infer_sentence(model, input_sentence, word_to_ix, tag_to_ix, config.cuda)
+    st.write("Tagged Sentence:")
+    st.code(result)
+
+# Evaluation metrics tabs
+st.header("Evaluation Metrics")
+tabs = st.tabs(["Overall Metrics", "Per-Tag Metrics", "Confusion Matrix", "Mismatched Tags"])
+
+with tabs[0]:
+    st.subheader("Overall Metrics")
+    overall_metrics_path = f"Models_Metrics/{model_type.lower()}_overall_performance_metrics.json"
+    if os.path.exists(overall_metrics_path):
+        overall_metrics = pd.DataFrame.from_dict(json.load(open(overall_metrics_path, "r")), orient="index")
+        st.dataframe(overall_metrics)
     else:
-        config = LSTMConfig()
-        model_class = LSTMModel
-        prepare_data = prepare_data_LSTM
-        model_path = 'Models/best_crf_pos_LSTM.pth'
-    
-    training_data, word_to_ix, tag_to_ix = prepare_data()
-    model = model_class(len(word_to_ix), len(tag_to_ix), config.embedding_dim, config.hidden_dim)
-    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-    model.eval()
-    
-    return model, word_to_ix, tag_to_ix, config
+        st.write("No overall metrics available. Please run the evaluation script first.")
 
-# Function to perform POS tagging
-def pos_tag_sentence(model, sentence, word_to_ix, tag_to_ix, config):
-    ix_to_tag = {v: k for k, v in tag_to_ix.items()}
-    sentence_indices = [word_to_ix.get(word.lower(), 0) for word in sentence.split()]
-    sentence_tensor = torch.tensor([sentence_indices], dtype=torch.long)
-    
-    with torch.no_grad():
-        predicted_tags = model(sentence_tensor)
-    
-    predicted_tags = [ix_to_tag[idx] for idx in predicted_tags[0]]
-    return list(zip(sentence.split(), predicted_tags))
+with tabs[1]:
+    st.subheader("Per-Tag Metrics")
+    per_tag_metrics_path = f"Models_Metrics/{model_type.lower()}_per_pos_performance_metrics.json"
+    if os.path.exists(per_tag_metrics_path):
+        per_tag_metrics = pd.DataFrame.from_dict(json.load(open(per_tag_metrics_path, "r")), orient="index")
+        st.dataframe(per_tag_metrics)
+    else:
+        st.write("No per-tag metrics available. Please run the evaluation script first.")
 
-# Streamlit app
-def main():
-    st.set_page_config(page_title="CRS POS Tagger(PyTorch)", layout="wide")
-    st.title("POS Tagging with CRF Models")
+with tabs[2]:
+    st.subheader("Confusion Matrix")
+    confusion_matrix_path = f"Models_Metrics/{model_type.lower()}_confusion_matrix.npy"
+    if os.path.exists(confusion_matrix_path):
+        cm = np.load(confusion_matrix_path)
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=list(tag_to_ix.keys()), yticklabels=list(tag_to_ix.keys()))
+        plt.title("Confusion Matrix")
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+        st.pyplot(fig)
+    else:
+        st.write("No confusion matrix available. Please run the evaluation script first.")
 
-    # Model selection in the top bar
-    model_type = st.selectbox("Select Model", ["GRU", "LSTM"])
+with tabs[3]:
+    st.subheader("Most Mismatched Tags")
+    most_mismatched_tags_path = f"Models_Metrics/{model_type.lower()}_most_mismatched_tags.json"
+    if os.path.exists(most_mismatched_tags_path):
+        most_mismatched_tags = pd.DataFrame(json.load(open(most_mismatched_tags_path, "r")), columns=["Count", "Tag1", "Tag2"])
+        st.dataframe(most_mismatched_tags)
+    else:
+        st.write("No most mismatched tags available. Please run the evaluation script first.")
 
-    # Load the selected model
-    model, word_to_ix, tag_to_ix, config = load_model(model_type)
+# Test data evaluation
+st.header("Test Data Evaluation")
+test_data = load_test_data()
 
-    # Sidebar for input and actions
-    st.sidebar.header("Actions")
-    input_sentence = st.sidebar.text_input("Enter a sentence for POS tagging:")
-    if st.sidebar.button("Tag Sentence"):
-        if input_sentence:
-            tagged_sentence = pos_tag_sentence(model, input_sentence, word_to_ix, tag_to_ix, config)
-            st.subheader("Tagged Sentence")
-            st.table(pd.DataFrame(tagged_sentence, columns=["Word", "POS Tag"]))
-        else:
-            st.warning("Please enter a sentence.")
+if st.button("Evaluate on Test Data"):
+    true_tags = []
+    pred_tags = []
+    for sample in test_data:
+        sentence = sample["sentence"]
+        result = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
+        pred_tags_list = [tag.split("<")[1][:-1] for tag in result.split()]
+        true_tags.extend(sample["tags"])
+        pred_tags.extend(pred_tags_list)
 
-    # Display evaluation metrics
-    if st.sidebar.button("Show Evaluation Metrics"):
-        col1, col2 = st.columns(2)
+    # Ensure true_tags and pred_tags have the same length
+    min_length = min(len(true_tags), len(pred_tags))
+    true_tags = true_tags[:min_length]
+    pred_tags = pred_tags[:min_length]
 
-        with col1:
-            st.subheader("Overall Performance Metrics")
-            with open(f'Model_Metrics/{model_type}_overall_performance_metrics.json', 'r') as f:
-                overall_metrics = json.load(f)
-            st.table(pd.DataFrame([overall_metrics]))
+    accuracy = accuracy_score(true_tags, pred_tags)
+    precision, recall, f1, _ = precision_recall_fscore_support(true_tags, pred_tags, average='weighted')
 
-            st.subheader("Per-POS Performance Metrics")
-            with open(f'Model_Metrics/{model_type}_per_pos_performance_metrics.json', 'r') as f:
-                per_pos_metrics = json.load(f)
-            st.table(pd.DataFrame(per_pos_metrics).T)
+    st.write(f"Test Data Accuracy: {accuracy:.2%}")
+    st.write(f"Test Data Precision: {precision:.2%}")
+    st.write(f"Test Data Recall: {recall:.2%}")
+    st.write(f"Test Data F1-Score: {f1:.2%}")
 
-            st.subheader("Most Mismatched Tags")
-            with open(f'Model_Metrics/{model_type}_most_mismatched_tags.json', 'r') as f:
-                mismatched_tags = json.load(f)
-            st.table(pd.DataFrame(mismatched_tags, columns=["Count", "True Tag", "Predicted Tag"]))
-
-        with col2:
-            st.subheader("Confusion Matrix")
-            confusion_matrix = np.load(f'Model_Metrics/{model_type}_confusion_matrix.npy')
-            fig, ax = plt.subplots(figsize=(10, 8))
-            im = ax.imshow(confusion_matrix, cmap='Blues')
-            ax.set_title("Confusion Matrix")
-            fig.colorbar(im)
-            st.pyplot(fig)
-
-            st.subheader("Confusion Matrix (from PNG)")
-            confusion_matrix_img = Image.open(f'Model_Metrics/{model_type}_confusion_matrix.png')
-            st.image(confusion_matrix_img, use_column_width=True)
-
-if __name__ == "__main__":
-    main()
