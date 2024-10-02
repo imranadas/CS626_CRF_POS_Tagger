@@ -12,24 +12,19 @@ from crf_training_GRU import CRFModel as GRUModel, Config as GRUConfig
 from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig
 
 def setup_logger(name, log_file, level=logging.INFO):
-    # Ensure the directory for the log file exists
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     
-    # File handler to write logs to the specified file
     file_handler = logging.FileHandler(log_file)
     file_handler.setFormatter(formatter)
     
-    # Stream handler to print logs to the console
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     
-    # Get or create a logger
     logger = logging.getLogger(name)
     logger.setLevel(level)
     
-    # Prevent duplicate logging by clearing existing handlers (if needed)
     if not logger.hasHandlers():
         logger.addHandler(file_handler)
         logger.addHandler(console_handler)
@@ -78,7 +73,6 @@ def load_test_data():
     return test_data
 
 def evaluate_model(model, test_data, word_to_ix, tag_to_ix, config):
-    
     device = torch.device("cuda" if config.cuda else "cpu")
     model = model.to(device)
     
@@ -90,22 +84,18 @@ def evaluate_model(model, test_data, word_to_ix, tag_to_ix, config):
         sentence = entry['sentence']
         real_tags = entry['tags']
         
-        # Predict tags using the CRF model
         predicted_tags = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
         predicted_tags = [tag.split('<')[1][:-1] for tag in predicted_tags.split()]
         
-        # Compare predicted tags with real tags
         for real_tag, predicted_tag in zip(real_tags, predicted_tags):
             if real_tag == predicted_tag:
                 correct_tags += 1
             total_tags += 1
 
-    # Calculate accuracy
     accuracy = correct_tags / total_tags if total_tags > 0 else 0
     logger.info(f"Model evaluation completed. Accuracy: {accuracy:.4f}")
     return accuracy
 
-# Load evaluation metrics
 def load_evaluation_metrics(model_type):
     logger.info(f"Loading evaluation metrics for {model_type} model")
     with open(f'Models_Metrics/{model_type}_overall_performance_metrics.json', 'r') as f:
@@ -118,7 +108,6 @@ def load_evaluation_metrics(model_type):
     logger.info(f"Evaluation metrics for {model_type} model loaded successfully")
     return overall_metrics, per_pos_metrics, mismatched_tags, confusion_matrix
 
-# Streamlit app
 def main():
     st.set_page_config(page_title="CRF POS App")
     st.title("CRF-based POS Tagging System")
@@ -175,7 +164,7 @@ def main():
         fig, ax = plt.subplots()
         models = ['GRU', 'LSTM']
         accuracies = [gru_accuracy, lstm_accuracy]
-        ax.bar(models, accuracies)
+        ax.bar(models, accuracies, color=['blue', 'orange'])
         ax.set_ylabel('Accuracy')
         ax.set_title('Model Comparison')
         st.pyplot(fig)
@@ -221,6 +210,15 @@ def main():
     plt.xlabel('Predicted label')
     st.pyplot(fig)
     logger.info("Displayed confusion matrix heatmap")
+    
+    # Load and display model training and evaluation plots
+    st.header("Model Training & Evaluation Plots")
+    if os.path.exists(f'Models_Metrics/CRF_{model_type}_graph.png'):
+        st.image(f'Models_Metrics/CRF_{model_type}_graph.png', caption=f'{model_type} Training Graph')
+    if os.path.exists(f'Models_Metrics/{model_type}_confusion_matrix.png'):
+        st.image(f'Models_Metrics/{model_type}_confusion_matrix.png', caption=f'{model_type} Confusion Matrix')
+
+    logger.info("Displayed model training and evaluation plots")
 
 if __name__ == "__main__":
     main()
