@@ -45,6 +45,18 @@ def load_model_config(model_type):
     logger.info(f"{model_type} model configuration loaded successfully")
     return model_params, word_to_ix, tag_to_ix
 
+def load_evaluation_metrics(model_type):
+    logger.info(f"Loading evaluation metrics for {model_type} model")
+    with open(f'Models_Metrics/{model_type}_overall_performance_metrics.json', 'r') as f:
+        overall_metrics = json.load(f)
+    with open(f'Models_Metrics/{model_type}_per_pos_performance_metrics.json', 'r') as f:
+        per_pos_metrics = json.load(f)
+    with open(f'Models_Metrics/{model_type}_most_mismatched_tags.json', 'r') as f:
+        mismatched_tags = json.load(f)
+    confusion_matrix = np.load(f'Models_Metrics/{model_type}_confusion_matrix.npy')
+    logger.info(f"Evaluation metrics for {model_type} model loaded successfully")
+    return overall_metrics, per_pos_metrics, mismatched_tags, confusion_matrix
+
 # Initialize and load the selected model
 def load_model(model_type):
     logger.info(f"Loading {model_type} model")
@@ -85,7 +97,7 @@ def evaluate_model(model, test_data, word_to_ix, tag_to_ix, config):
         real_tags = entry['tags']
         
         predicted_tags = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
-        predicted_tags = [tag.split('<')[1][:-1] for tag in predicted_tags.split()]
+        predicted_tags = [tag for _, tag in predicted_tags]
 
         for real_tag, predicted_tag in zip(real_tags, predicted_tags):
             if real_tag == predicted_tag:
@@ -134,8 +146,14 @@ def main():
                 logger.info(f"Tagging sentence: {sentence}")
                 tagged_sentence = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
                 st.markdown("**Tagged Sentence:**")
-                st.write(tagged_sentence)
-                logger.info(f"Tagged sentence: {tagged_sentence}")
+                
+                # Create a string with words and their tags in subtext format
+                subtext_tagged = " ".join([f"{word}<sub><font color='blue'>{tag}</font></sub>" for word, tag in tagged_sentence])
+                
+                # Display the tagged sentence with subtext tags
+                st.markdown(subtext_tagged, unsafe_allow_html=True)
+                
+                logger.info(f"Tagged sentence displayed with subtext tags")
             else:
                 st.warning("Please enter a sentence to tag.")
                 logger.warning("User attempted to tag an empty sentence")
@@ -178,11 +196,11 @@ def main():
         metrics_df = pd.DataFrame({
             'Metric': ['Precision', 'Recall', 'F1 Score', 'F0.5 Score', 'F2 Score'],
             'Value': [
-                overall_metrics['precision'],
-                overall_metrics['recall'],
-                overall_metrics['f1'],
-                overall_metrics['f0.5'],
-                overall_metrics['f2']
+                f"{overall_metrics['precision']*100:.2f}%",
+                f"{overall_metrics['recall']*100:.2f}%",
+                f"{overall_metrics['f1']*100:.2f}%",
+                f"{overall_metrics['f0.5']*100:.2f}%",
+                f"{overall_metrics['f2']*100:.2f}%"
             ]
         })
         st.table(metrics_df.set_index('Metric'))
@@ -191,7 +209,9 @@ def main():
         # Per-POS metrics
         st.subheader("Performance by POS Tag")
         pos_metrics_df = pd.DataFrame(per_pos_metrics).transpose()
-        pos_metrics_df = pos_metrics_df.sort_values('f1', ascending=False)
+        for col in ['precision', 'recall', 'f1']:
+            pos_metrics_df[col] = pos_metrics_df[col].apply(lambda x: f"{x*100:.2f}%")
+        pos_metrics_df = pos_metrics_df.sort_values('f1', ascending=False, key=lambda x: x.str.rstrip('%').astype(float))
         st.dataframe(pos_metrics_df)
         logger.info("Displayed per-POS performance metrics")
         
@@ -221,6 +241,9 @@ def main():
             col2.image(f'Models_Metrics/{model_type}_confusion_matrix.png', caption=f'{model_type} Confusion Matrix')
 
         logger.info("Displayed model training and evaluation plots")
+        
+    st.write("---")
+    st.info("Developed using CRF POS Tagger Model with ❤️.")
 
 if __name__ == "__main__":
     main()

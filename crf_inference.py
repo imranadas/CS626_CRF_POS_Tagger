@@ -120,10 +120,8 @@ def infer_sentence(model, sentence, word_to_ix, tag_to_ix, use_cuda):
     
     predicted_tags = [ix_to_tag[idx] for idx in predicted_tags[0]]
     
-    # Combine words and tags
-    result = [f"{word}<{predicted_tags[i]}>" for i, word in enumerate(words)]
-    
-    return " ".join(result)
+    # Return a list of tuples containing words and their predicted tags
+    return list(zip(words, predicted_tags))
 
 # Main inferencing loop
 def run_inferencing_loop():
@@ -147,9 +145,9 @@ def run_inferencing_loop():
         logger.info(f"Input Sentence: {sentence}")
         
         result = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
-        
-        logger.info(f"Output Tagged Sentence: {result}")
-        print(result)
+        formatted_result = " ".join([f"{word}<{tag}>" for word, tag in result])
+        logger.info(f"Output Tagged Sentence: {formatted_result}")
+        print(formatted_result)
 
 # Entry point of the script
 if __name__ == "__main__":
