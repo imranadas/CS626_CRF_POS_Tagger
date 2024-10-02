@@ -10,7 +10,6 @@ from crf_training_GRU import CRFModel, Config, prepare_data, extract_features
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, fbeta_score
 
 def setup_logger(name, log_file, level=logging.INFO):
-    """Function to setup as many loggers as you want, logging to both a file and the console."""
     # Ensure the directory for the log file exists
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     
@@ -59,6 +58,7 @@ def load_mappings():
 # Evaluate the model
 def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
     ix_to_tag = {v: k for k, v in tag_to_ix.items()}
+    ix_to_word = {v: k for k, v in word_to_ix.items()}
     all_tags = [ix_to_tag[i] for i in range(len(tag_to_ix))]
 
     y_true = []
@@ -70,11 +70,17 @@ def evaluate_model(tagged_sentences, model, word_to_ix, tag_to_ix, use_cuda):
     model.eval()
     with torch.no_grad():
         for idx, (sentence_indices, tag_indices) in enumerate(tagged_sentences):
+            # Convert indices back to words and tags
+            sentence = [ix_to_word[ix] for ix in sentence_indices]
+            tags = [ix_to_tag[ix] for ix in tag_indices]
+            
+            features = extract_features(sentence, tags)
+            
             sentence_tensor = torch.tensor([sentence_indices]).long()
             if use_cuda:
                 sentence_tensor = sentence_tensor.cuda()
             
-            predicted_tags = model(sentence_tensor)[0]  # Get the first (and only) element of the batch
+            predicted_tags = model(sentence_tensor)[0]
 
             true_tags = [ix_to_tag[i] for i in tag_indices]
             pred_tags = [ix_to_tag[i] for i in predicted_tags]
@@ -188,6 +194,7 @@ if __name__ == '__main__':
     if config.cuda:
         model = model.cuda()
     
+    # Use the prepare_data function to get the data in the correct format
     training_data, _, _ = prepare_data()
     overall_metrics, per_tag_metrics, cm, most_mismatched_tags, all_tags = evaluate_model(training_data, model, word_to_ix, tag_to_ix, use_cuda)
 

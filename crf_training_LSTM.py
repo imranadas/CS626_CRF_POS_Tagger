@@ -21,11 +21,11 @@ nltk.download('universal_tagset')
 # Configuration section
 class Config:
     def __init__(self):
-        self.epochs = 30
+        self.epochs = 25
         self.learning_rate = 0.001
-        self.batch_size = 32  # Reduced batch size
-        self.embedding_dim = 300
-        self.hidden_dim = 256  # Reduced hidden dimension
+        self.batch_size = 32
+        self.embedding_dim = 320
+        self.hidden_dim = 640
         self.num_layers = 2
         self.dropout = 0.3  # Reduced dropout
         self.cuda = torch.cuda.is_available()
@@ -34,7 +34,6 @@ class Config:
         self.patience = 5
 
 def setup_logger(name, log_file, level=logging.INFO):
-    """Function to setup as many loggers as you want, logging to both a file and the console."""
     # Ensure the directory for the log file exists
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     
@@ -68,11 +67,14 @@ stemmer = PorterStemmer()
 def extract_features(sentence, tags):
     features = []
     for word, tag in zip(sentence, tags):
-        stem = stemmer.stem(word.lower())
-        suffix = word[-3:] if len(word) > 3 else word
-        prefix = word[:3] if len(word) > 3 else word
-        is_punctuation = word in ",.!?;:\"'()[]{}«»""''…—–-"
-        features.append((word.lower(), stem, suffix, prefix, is_punctuation, tag))
+        if word in ",.!?;:\"'()[]{}«»""''…—–-":
+            # Treat punctuation as a separate word
+            features.append((word, word, word, word, True, tag))
+        else:
+            stem = stemmer.stem(word.lower())
+            suffix = word[-3:] if len(word) > 3 else word
+            prefix = word[:3] if len(word) > 3 else word
+            features.append((word.lower(), stem, suffix, prefix, False, tag))
     logger.debug(f'Extracted features: {features}')
     return features
 
@@ -89,7 +91,16 @@ def prepare_data():
     logger.info(f'Total tagged sentences in Brown corpus: {len(tagged_sentences)}')
 
     for idx, tagged_sentence in enumerate(tagged_sentences):
-        words, tags = zip(*tagged_sentence)
+        words, tags = [], []
+        for word, tag in tagged_sentence:
+            if word in ",.!?;:\"'()[]{}«»""''…—–-":
+                # Add punctuation as a separate word
+                words.append(word)
+                tags.append('.')  # Use '.' tag for punctuation in universal tagset
+            else:
+                words.append(word)
+                tags.append(tag)
+        
         features = extract_features(words, tags)
         sentence_indices = [word_to_ix[word.lower()] for word, _, _, _, _, _ in features]
         tag_indices = [tag_to_ix[tag] for _, _, _, _, _, tag in features]
@@ -308,6 +319,10 @@ if __name__ == "__main__":
     config = Config()
     training_data, word_to_ix, tag_to_ix = prepare_data()
     save_model_params(word_to_ix, tag_to_ix, config)
+
+    logger.info(f'Vocabulary size: {len(word_to_ix)}')
+    logger.info(f'Number of unique tags: {len(tag_to_ix)}')
+    logger.info(f'Tags: {", ".join(tag_to_ix.keys())}')
 
     random.seed(42)
     torch.manual_seed(42)

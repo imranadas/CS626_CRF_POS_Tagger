@@ -3,10 +3,9 @@ import json
 import torch
 import logging
 from crf_training_GRU import CRFModel as GRUModel, Config as GRUConfig
-from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig
+from crf_training_LSTM import CRFModel as LSTMModel, Config as LSTMConfig, extract_features
 
 def setup_logger(name, log_file, level=logging.INFO):
-    """Function to setup as many loggers as you want, logging to both a file and the console."""
     # Ensure the directory for the log file exists
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     
@@ -92,11 +91,24 @@ def initialize_model(model_type):
 def infer_sentence(model, sentence, word_to_ix, tag_to_ix, use_cuda):
     ix_to_tag = {v: k for k, v in tag_to_ix.items()}
     
-    # Handle unknown words by using a special token or the most common word
-    unk_token = word_to_ix.get('<UNK>', 0)  # Use 0 if <UNK> is not defined
-    sentence_indices = [word_to_ix.get(word.lower(), unk_token) for word in sentence.split()]
-    sentence_tensor = torch.tensor([sentence_indices], dtype=torch.long)
+    # Split the sentence into words and keep punctuation separate
+    words = []
+    for word in sentence.split():
+        if word[-1] in ",.!?;:\"'()[]{}«»""''…—–-":
+            if len(word[:-1]) > 0:  # Only add if the word part exists
+                words.append(word[:-1])
+            words.append(word[-1])
+        else:
+            words.append(word)
 
+    # Generate dummy tags for the features function
+    dummy_tags = ['DUMMY'] * len(words)
+    features = extract_features(words, dummy_tags)
+    
+    # Convert words to indices, use <UNK> for unknown words
+    sentence_indices = [word_to_ix.get(word.lower(), word_to_ix['<UNK>']) for word, _, _, _, _, _ in features]
+    sentence_tensor = torch.tensor([sentence_indices], dtype=torch.long)
+    
     if use_cuda:
         sentence_tensor = sentence_tensor.cuda()
     
@@ -105,8 +117,10 @@ def infer_sentence(model, sentence, word_to_ix, tag_to_ix, use_cuda):
     
     predicted_tags = [ix_to_tag[idx] for idx in predicted_tags[0]]
     
-    result = " ".join([f"{word}<{tag}>" for word, tag in zip(sentence.split(), predicted_tags)])
-    return result
+    # Combine words and tags
+    result = [f"{word}<{predicted_tags[i]}>" for i, word in enumerate(words)]
+    
+    return " ".join(result)
 
 # Main inferencing loop
 def run_inferencing_loop():
