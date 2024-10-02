@@ -86,7 +86,7 @@ def evaluate_model(model, test_data, word_to_ix, tag_to_ix, config):
         
         predicted_tags = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
         predicted_tags = [tag.split('<')[1][:-1] for tag in predicted_tags.split()]
-        
+
         for real_tag, predicted_tag in zip(real_tags, predicted_tags):
             if real_tag == predicted_tag:
                 correct_tags += 1
@@ -109,116 +109,118 @@ def load_evaluation_metrics(model_type):
     return overall_metrics, per_pos_metrics, mismatched_tags, confusion_matrix
 
 def main():
-    st.set_page_config(page_title="CRF POS App")
+    st.set_page_config(page_title="CRF POS App", layout="wide")
     st.title("CRF-based POS Tagging System")
     logger.info("Streamlit app started")
     
-    # Sidebar for model selection
+    # Sidebar for model selection and navigation
+    st.sidebar.title("Navigation")
+    section = st.sidebar.radio("Go to section:", ["Tag a Sentence", "Model Evaluation", "Evaluation Metrics", "Training & Plots"])
+    
     st.sidebar.title("Model Selection")
     model_type = st.sidebar.radio("Choose a model:", ("GRU", "LSTM"))
     logger.info(f"User selected {model_type} model")
     
     # Load the selected model
     model, word_to_ix, tag_to_ix, config = load_model(model_type)
-    
-    # Main content area
-    st.header(f"Using {model_type} Model")
-    
-    # Text input for sentence tagging
-    st.subheader("Tag a Sentence")
-    sentence = st.text_input("Enter a sentence to tag:")
-    if st.button("Tag Sentence"):
-        if sentence:
-            logger.info(f"Tagging sentence: {sentence}")
-            tagged_sentence = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
-            st.markdown("**Tagged Sentence:**")
-            st.write(tagged_sentence)
-            logger.info(f"Tagged sentence: {tagged_sentence}")
-        else:
-            st.warning("Please enter a sentence to tag.")
-            logger.warning("User attempted to tag an empty sentence")
 
-    # Model Evaluation
-    st.header("Model Evaluation")
-    if st.button("Start Evaluation"):
-        logger.info("User initiated model evaluation")
-        test_data = load_test_data()
+    if section == "Tag a Sentence":
+        st.header("POS Tagging")
+        st.subheader("Tag a Sentence")
         
-        # Evaluate both models
-        gru_model, gru_word_to_ix, gru_tag_to_ix, gru_config = load_model("GRU")
-        lstm_model, lstm_word_to_ix, lstm_tag_to_ix, lstm_config = load_model("LSTM")
+        sentence = st.text_input("Enter a sentence to tag:")
+        if st.button("Tag Sentence"):
+            if sentence:
+                logger.info(f"Tagging sentence: {sentence}")
+                tagged_sentence = infer_sentence(model, sentence, word_to_ix, tag_to_ix, config.cuda)
+                st.markdown("**Tagged Sentence:**")
+                st.write(tagged_sentence)
+                logger.info(f"Tagged sentence: {tagged_sentence}")
+            else:
+                st.warning("Please enter a sentence to tag.")
+                logger.warning("User attempted to tag an empty sentence")
+
+    elif section == "Model Evaluation":
+        st.header("Model Evaluation")
+        if st.button("Start Evaluation"):
+            logger.info("User initiated model evaluation")
+            test_data = load_test_data()
+            
+            # Evaluate both models
+            gru_model, gru_word_to_ix, gru_tag_to_ix, gru_config = load_model("GRU")
+            lstm_model, lstm_word_to_ix, lstm_tag_to_ix, lstm_config = load_model("LSTM")
+            
+            gru_accuracy = evaluate_model(gru_model, test_data, gru_word_to_ix, gru_tag_to_ix, gru_config)
+            lstm_accuracy = evaluate_model(lstm_model, test_data, lstm_word_to_ix, lstm_tag_to_ix, lstm_config)
+            
+            st.subheader("Evaluation Results")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"**GRU Model Accuracy:** {gru_accuracy:.4f}")
+            with col2:
+                st.write(f"**LSTM Model Accuracy:** {lstm_accuracy:.4f}")
+            
+            # Visualization
+            fig, ax = plt.subplots()
+            models = ['GRU', 'LSTM']
+            accuracies = [gru_accuracy, lstm_accuracy]
+            ax.bar(models, accuracies, color=['blue', 'orange'])
+            ax.set_ylabel('Accuracy')
+            ax.set_title('Model Comparison')
+            st.pyplot(fig)
+    
+    elif section == "Evaluation Metrics":
+        st.header("Evaluation Metrics")
+        overall_metrics, per_pos_metrics, mismatched_tags, confusion_matrix = load_evaluation_metrics(model_type)
         
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Overall metrics
+        st.subheader("Overall Performance")
+        metrics_df = pd.DataFrame({
+            'Metric': ['Precision', 'Recall', 'F1 Score', 'F0.5 Score', 'F2 Score'],
+            'Value': [
+                overall_metrics['precision'],
+                overall_metrics['recall'],
+                overall_metrics['f1'],
+                overall_metrics['f0.5'],
+                overall_metrics['f2']
+            ]
+        })
+        st.table(metrics_df.set_index('Metric'))
+        logger.info("Displayed overall performance metrics")
         
-        gru_model = gru_model.to(device)
-        lstm_model = lstm_model.to(device)
+        # Per-POS metrics
+        st.subheader("Performance by POS Tag")
+        pos_metrics_df = pd.DataFrame(per_pos_metrics).transpose()
+        pos_metrics_df = pos_metrics_df.sort_values('f1', ascending=False)
+        st.dataframe(pos_metrics_df)
+        logger.info("Displayed per-POS performance metrics")
         
-        gru_accuracy = evaluate_model(gru_model, test_data, gru_word_to_ix, gru_tag_to_ix, gru_config)
-        lstm_accuracy = evaluate_model(lstm_model, test_data, lstm_word_to_ix, lstm_tag_to_ix, lstm_config)
+        # Most mismatched tags
+        st.subheader("Top 5 Most Mismatched Tags")
+        mismatched_df = pd.DataFrame(mismatched_tags, columns=['Count', 'True Tag', 'Predicted Tag'])
+        st.table(mismatched_df)
+        logger.info("Displayed top 5 most mismatched tags")
         
-        st.subheader("Evaluation Results")
-        st.write(f"GRU Model Accuracy: {gru_accuracy:.4f}")
-        st.write(f"LSTM Model Accuracy: {lstm_accuracy:.4f}")
-        
-        # Visualization
-        fig, ax = plt.subplots()
-        models = ['GRU', 'LSTM']
-        accuracies = [gru_accuracy, lstm_accuracy]
-        ax.bar(models, accuracies, color=['blue', 'orange'])
-        ax.set_ylabel('Accuracy')
-        ax.set_title('Model Comparison')
+        # Confusion matrix heatmap
+        st.subheader("Confusion Matrix")
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(confusion_matrix, ax=ax, cmap='YlOrRd', fmt='d')
+        plt.title("Confusion Matrix")
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
         st.pyplot(fig)
+        logger.info("Displayed confusion matrix heatmap")
     
-    # Display evaluation metrics
-    st.header("Evaluation Metrics")
-    overall_metrics, per_pos_metrics, mismatched_tags, confusion_matrix = load_evaluation_metrics(model_type)
-    
-    # Overall metrics
-    st.subheader("Overall Performance")
-    metrics_df = pd.DataFrame({
-        'Metric': ['Precision', 'Recall', 'F1 Score', 'F0.5 Score', 'F2 Score'],
-        'Value': [
-            overall_metrics['precision'],
-            overall_metrics['recall'],
-            overall_metrics['f1'],
-            overall_metrics['f0.5'],
-            overall_metrics['f2']
-        ]
-    })
-    st.table(metrics_df.set_index('Metric'))
-    logger.info("Displayed overall performance metrics")
-    
-    # Per-POS metrics
-    st.subheader("Performance by POS Tag")
-    pos_metrics_df = pd.DataFrame(per_pos_metrics).transpose()
-    pos_metrics_df = pos_metrics_df.sort_values('f1', ascending=False)
-    st.dataframe(pos_metrics_df)
-    logger.info("Displayed per-POS performance metrics")
-    
-    # Most mismatched tags
-    st.subheader("Top 5 Most Mismatched Tags")
-    mismatched_df = pd.DataFrame(mismatched_tags, columns=['Count', 'True Tag', 'Predicted Tag'])
-    st.table(mismatched_df)
-    logger.info("Displayed top 5 most mismatched tags")
-    
-    # Confusion matrix heatmap
-    st.subheader("Confusion Matrix")
-    fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(confusion_matrix, ax=ax, cmap='YlOrRd', fmt='d')
-    plt.title("Confusion Matrix")
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-    st.pyplot(fig)
-    logger.info("Displayed confusion matrix heatmap")
-    
-    # Load and display model training and evaluation plots
-    st.header("Model Training & Evaluation Plots")
-    if os.path.exists(f'Models_Metrics/CRF_{model_type}_graph.png'):
-        st.image(f'Models_Metrics/CRF_{model_type}_graph.png', caption=f'{model_type} Training Graph')
-    if os.path.exists(f'Models_Metrics/{model_type}_confusion_matrix.png'):
-        st.image(f'Models_Metrics/{model_type}_confusion_matrix.png', caption=f'{model_type} Confusion Matrix')
+    elif section == "Training & Plots":
+        st.header("Model Training & Evaluation Plots")
+        col1, col2 = st.columns(2)
+        
+        if os.path.exists(f'Models_Metrics/CRF_{model_type}_graph.png'):
+            col1.image(f'Models_Metrics/CRF_{model_type}_graph.png', caption=f'{model_type} Training Graph')
+        if os.path.exists(f'Models_Metrics/{model_type}_confusion_matrix.png'):
+            col2.image(f'Models_Metrics/{model_type}_confusion_matrix.png', caption=f'{model_type} Confusion Matrix')
 
-    logger.info("Displayed model training and evaluation plots")
+        logger.info("Displayed model training and evaluation plots")
 
 if __name__ == "__main__":
     main()

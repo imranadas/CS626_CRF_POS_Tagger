@@ -151,3 +151,23 @@
 2024-10-02 10:03:15,392 - crf_app - INFO - Displayed top 5 most mismatched tags
 2024-10-02 10:03:16,161 - crf_app - INFO - Displayed confusion matrix heatmap
 2024-10-02 10:03:16,166 - crf_app - INFO - Displayed model training and evaluation plots
+2024-10-02 10:20:50,771 - crf_app - INFO - Streamlit app started
+2024-10-02 10:20:50,773 - crf_app - INFO - User selected GRU model
+2024-10-02 10:20:50,774 - crf_app - INFO - Loading GRU model
+2024-10-02 10:20:50,774 - crf_app - INFO - Loading GRU model configuration
+2024-10-02 10:20:50,789 - crf_app - INFO - GRU model configuration loaded successfully
+2024-10-02 10:20:50,955 - crf_app - INFO - GRU model loaded successfully
+2024-10-02 10:21:00,255 - crf_app - INFO - Streamlit app started
+2024-10-02 10:21:00,257 - crf_app - INFO - User selected GRU model
+2024-10-02 10:21:00,258 - crf_app - INFO - Loading GRU model
+2024-10-02 10:21:00,258 - crf_app - INFO - Loading GRU model configuration
+2024-10-02 10:21:00,273 - crf_app - INFO - GRU model configuration loaded successfully
+2024-10-02 10:21:00,317 - crf_app - INFO - Streamlit app started
+2024-10-02 10:21:00,319 - crf_app - INFO - User selected GRU model
+2024-10-02 10:21:00,319 - crf_app - INFO - Loading GRU model
+2024-10-02 10:21:00,320 - crf_app - INFO - Loading GRU model configuration
+2024-10-02 10:21:00,342 - crf_app - INFO - GRU model configuration loaded successfully
+2024-10-02 10:21:00,513 - crf_app - INFO - GRU model loaded successfully
+2024-10-02 10:21:00,515 - crf_app - INFO - GRU model loaded successfully
+2024-10-02 10:21:00,637 - crf_app - INFO - Tagging sentence: The hotel room was nice, except for the noisy air conditioner.
+2024-10-02 10:21:00,904 - crf_app - INFO - Tagged sentence: The<DET> hotel<NOUN> room<NOUN> was<VERB> nice<ADJ> ,<.> except<ADP> for<ADP> the<DET> noisy<ADJ> air<NOUN> conditioner<NOUN> .<.>
