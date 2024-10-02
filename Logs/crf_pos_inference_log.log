@@ -58,3 +58,13 @@
 2024-10-02 09:12:51,240 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
 2024-10-02 09:12:51,269 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
 2024-10-02 09:12:51,546 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 18:43:16,752 - crf_inference - INFO - Initializing LSTM model...
+2024-10-02 18:43:16,804 - crf_inference - INFO - LSTM model parameters loaded from Model_Config/LSTM_model_params.json
+2024-10-02 18:43:16,823 - crf_inference - INFO - LSTM word and tag mappings loaded from JSON files
+2024-10-02 18:43:17,423 - crf_inference - INFO - LSTM model loaded successfully from Models/crf_pos_LSTM.pth
+2024-10-02 18:43:17,424 - crf_inference - INFO - Starting inference loop. Type 'exit' to quit.
+2024-10-02 18:43:32,208 - crf_inference - INFO - Input Sentence: The presentation went well and the audience was engaged.
+2024-10-02 18:43:32,671 - crf_inference - INFO - Output Tagged Sentence: The<DET> presentation<NOUN> went<VERB> well<ADV> and<CONJ> the<DET> audience<NOUN> was<VERB> engaged<VERB> .<.>
+2024-10-02 18:44:46,706 - crf_inference - INFO - Input Sentence: The quick brown fox jumps over the lazy dog.
+2024-10-02 18:44:46,730 - crf_inference - INFO - Output Tagged Sentence: The<DET> quick<ADJ> brown<ADJ> fox<NOUN> jumps<VERB> over<ADP> the<DET> lazy<ADJ> dog<NOUN> .<.>
+2024-10-02 18:45:26,660 - crf_inference - INFO - Exiting inference loop.

@@ -105,7 +105,7 @@ def evaluate_model(model, test_data, word_to_ix, tag_to_ix, config):
             total_tags += 1
 
     accuracy = correct_tags / total_tags if total_tags > 0 else 0
-    logger.info(f"Model evaluation completed. Accuracy: {accuracy:.4f}")
+    logger.info(f"Model evaluation completed. Accuracy: {accuracy*100:.6f}%")
     return accuracy
 
 def load_evaluation_metrics(model_type):
@@ -174,9 +174,9 @@ def main():
             st.subheader("Evaluation Results")
             col1, col2 = st.columns(2)
             with col1:
-                st.write(f"**GRU Model Accuracy:** {gru_accuracy:.4f}")
+                st.write(f"**GRU Model Accuracy:** {gru_accuracy*100:.6f}%")
             with col2:
-                st.write(f"**LSTM Model Accuracy:** {lstm_accuracy:.4f}")
+                st.write(f"**LSTM Model Accuracy:** {lstm_accuracy*100:.6f}%")
             
             # Visualization
             fig, ax = plt.subplots()
@@ -196,11 +196,11 @@ def main():
         metrics_df = pd.DataFrame({
             'Metric': ['Precision', 'Recall', 'F1 Score', 'F0.5 Score', 'F2 Score'],
             'Value': [
-                f"{overall_metrics['precision']*100:.2f}%",
-                f"{overall_metrics['recall']*100:.2f}%",
-                f"{overall_metrics['f1']*100:.2f}%",
-                f"{overall_metrics['f0.5']*100:.2f}%",
-                f"{overall_metrics['f2']*100:.2f}%"
+                f"{overall_metrics['precision']*100:.6f}%",
+                f"{overall_metrics['recall']*100:.6f}%",
+                f"{overall_metrics['f1']*100:.6f}%",
+                f"{overall_metrics['f0.5']*100:.6f}%",
+                f"{overall_metrics['f2']*100:.6f}%"
             ]
         })
         st.table(metrics_df.set_index('Metric'))
@@ -210,7 +210,7 @@ def main():
         st.subheader("Performance by POS Tag")
         pos_metrics_df = pd.DataFrame(per_pos_metrics).transpose()
         for col in ['precision', 'recall', 'f1']:
-            pos_metrics_df[col] = pos_metrics_df[col].apply(lambda x: f"{x*100:.2f}%")
+            pos_metrics_df[col] = pos_metrics_df[col].apply(lambda x: f"{x*100:.6f}%")
         pos_metrics_df = pos_metrics_df.sort_values('f1', ascending=False, key=lambda x: x.str.rstrip('%').astype(float))
         st.dataframe(pos_metrics_df)
         logger.info("Displayed per-POS performance metrics")
@@ -243,7 +243,6 @@ def main():
         logger.info("Displayed model training and evaluation plots")
         
     st.write("---")
-    st.info("Developed using CRF POS Tagger Model with ❤️.")
 
 if __name__ == "__main__":
     main()
