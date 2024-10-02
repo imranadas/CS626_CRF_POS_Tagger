@@ -1,0 +1,39 @@
+2024-10-02 09:53:50,812 - crf_app - INFO - Streamlit app started
+2024-10-02 09:53:50,813 - crf_app - INFO - User selected GRU model
+2024-10-02 09:53:50,813 - crf_app - INFO - Loading GRU model
+2024-10-02 09:53:50,813 - crf_app - INFO - Loading GRU model configuration
+2024-10-02 09:53:50,827 - crf_app - INFO - GRU model configuration loaded successfully
+2024-10-02 09:53:50,996 - crf_app - INFO - GRU model loaded successfully
+2024-10-02 09:53:50,999 - crf_app - INFO - Loading evaluation metrics for GRU model
+2024-10-02 09:53:51,000 - crf_app - INFO - Evaluation metrics for GRU model loaded successfully
+2024-10-02 09:53:51,007 - crf_app - INFO - Displayed overall performance metrics
+2024-10-02 09:53:51,010 - crf_app - INFO - Displayed per-POS performance metrics
+2024-10-02 09:53:51,012 - crf_app - INFO - Displayed top 5 most mismatched tags
+2024-10-02 09:53:51,495 - crf_app - INFO - Displayed confusion matrix heatmap
+2024-10-02 09:53:53,455 - crf_app - INFO - Streamlit app started
+2024-10-02 09:53:53,457 - crf_app - INFO - User selected GRU model
+2024-10-02 09:53:53,458 - crf_app - INFO - Loading GRU model
+2024-10-02 09:53:53,458 - crf_app - INFO - Loading GRU model configuration
+2024-10-02 09:53:53,488 - crf_app - INFO - GRU model configuration loaded successfully
+2024-10-02 09:53:53,716 - crf_app - INFO - GRU model loaded successfully
+2024-10-02 09:53:53,719 - crf_app - INFO - User initiated model evaluation
+2024-10-02 09:53:53,719 - crf_app - INFO - Loading test data
+2024-10-02 09:53:53,720 - crf_app - INFO - Loaded 49 test sentences
+2024-10-02 09:53:53,721 - crf_app - INFO - Loading GRU model
+2024-10-02 09:53:53,721 - crf_app - INFO - Loading GRU model configuration
+2024-10-02 09:53:53,748 - crf_app - INFO - GRU model configuration loaded successfully
+2024-10-02 09:53:54,008 - crf_app - INFO - GRU model loaded successfully
+2024-10-02 09:53:54,009 - crf_app - INFO - Loading LSTM model
+2024-10-02 09:53:54,009 - crf_app - INFO - Loading LSTM model configuration
+2024-10-02 09:53:54,042 - crf_app - INFO - LSTM model configuration loaded successfully
+2024-10-02 09:53:54,315 - crf_app - INFO - LSTM model loaded successfully
+2024-10-02 09:53:54,619 - crf_app - INFO - Starting model evaluation
+2024-10-02 09:53:55,120 - crf_app - INFO - Model evaluation completed. Accuracy: 0.9248
+2024-10-02 09:53:55,123 - crf_app - INFO - Starting model evaluation
+2024-10-02 09:53:55,475 - crf_app - INFO - Model evaluation completed. Accuracy: 0.9272
+2024-10-02 09:53:55,685 - crf_app - INFO - Loading evaluation metrics for GRU model
+2024-10-02 09:53:55,688 - crf_app - INFO - Evaluation metrics for GRU model loaded successfully
+2024-10-02 09:53:55,692 - crf_app - INFO - Displayed overall performance metrics
+2024-10-02 09:53:55,698 - crf_app - INFO - Displayed per-POS performance metrics
+2024-10-02 09:53:55,702 - crf_app - INFO - Displayed top 5 most mismatched tags
+2024-10-02 09:53:56,444 - crf_app - INFO - Displayed confusion matrix heatmap

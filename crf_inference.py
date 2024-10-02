@@ -89,6 +89,9 @@ def initialize_model(model_type):
 
 # Function to process input sentence and predict tags
 def infer_sentence(model, sentence, word_to_ix, tag_to_ix, use_cuda):
+    device = torch.device("cuda" if use_cuda else "cpu")
+    model = model.to(device)
+    
     ix_to_tag = {v: k for k, v in tag_to_ix.items()}
     
     # Split the sentence into words and keep punctuation separate
@@ -107,7 +110,7 @@ def infer_sentence(model, sentence, word_to_ix, tag_to_ix, use_cuda):
     
     # Convert words to indices, use <UNK> for unknown words
     sentence_indices = [word_to_ix.get(word.lower(), word_to_ix['<UNK>']) for word, _, _, _, _, _ in features]
-    sentence_tensor = torch.tensor([sentence_indices], dtype=torch.long)
+    sentence_tensor = torch.tensor([sentence_indices], dtype=torch.long).to(device)
     
     if use_cuda:
         sentence_tensor = sentence_tensor.cuda()
